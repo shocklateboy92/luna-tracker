@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">🌜 LunaTracker 🌛</string>
+    <string name="log_an_event">Logga un evento:</string>
+    <string name="logbook">Diario di bordo</string>
+
+    <string name="log_bottle_dialog_title">Biberon</string>
+    <string name="log_bottle_dialog_description">Inserisci la quantità contenuta nel biberon</string>
+</resources>

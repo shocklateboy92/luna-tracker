@@ -4,19 +4,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.NumberPicker
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import it.danieleverducci.lunatracker.ui.theme.LunaTrackerTheme
+import it.danieleverducci.lunatracker.entities.LunaEvent
+import it.danieleverducci.lunatracker.entities.LunaEventType
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -29,11 +20,31 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         findViewById<View>(R.id.button_bottle).setOnClickListener { askBabyBottleContent() }
-        findViewById<View>(R.id.button_nipple_left).setOnClickListener { logEvent(LunaEvent(LunaEventType.BREASTFEEDING_LEFT_NIPPLE)) }
-        findViewById<View>(R.id.button_nipple_both).setOnClickListener { logEvent(LunaEvent(LunaEventType.BREASTFEEDING_BOTH_NIPPLE)) }
-        findViewById<View>(R.id.button_nipple_right).setOnClickListener { logEvent(LunaEvent(LunaEventType.BREASTFEEDING_RIGHT_NIPPLE)) }
-        findViewById<View>(R.id.button_change_poo).setOnClickListener { logEvent(LunaEvent(LunaEventType.DIAPERCHANGE_POO)) }
-        findViewById<View>(R.id.button_change_pee).setOnClickListener { logEvent(LunaEvent(LunaEventType.DIAPERCHANGE_PEE)) }
+        findViewById<View>(R.id.button_nipple_left).setOnClickListener { logEvent(
+            LunaEvent(
+                LunaEventType.BREASTFEEDING_LEFT_NIPPLE
+            )
+        ) }
+        findViewById<View>(R.id.button_nipple_both).setOnClickListener { logEvent(
+            LunaEvent(
+                LunaEventType.BREASTFEEDING_BOTH_NIPPLE
+            )
+        ) }
+        findViewById<View>(R.id.button_nipple_right).setOnClickListener { logEvent(
+            LunaEvent(
+                LunaEventType.BREASTFEEDING_RIGHT_NIPPLE
+            )
+        ) }
+        findViewById<View>(R.id.button_change_poo).setOnClickListener { logEvent(
+            LunaEvent(
+                LunaEventType.DIAPERCHANGE_POO
+            )
+        ) }
+        findViewById<View>(R.id.button_change_pee).setOnClickListener { logEvent(
+            LunaEvent(
+                LunaEventType.DIAPERCHANGE_PEE
+            )
+        ) }
     }
 
     fun askBabyBottleContent() {
@@ -44,12 +55,12 @@ class MainActivity : AppCompatActivity() {
         d.setMessage(R.string.log_bottle_dialog_description)
         d.setView(dialogView)
         val numberPicker = dialogView.findViewById<NumberPicker>(R.id.dialog_number_picker)
-        numberPicker.minValue = 10
-        numberPicker.maxValue = 250
-        numberPicker.displayedValues = ((numberPicker.minValue..numberPicker.maxValue step 10).map { it.toString() }.toTypedArray())
+        numberPicker.minValue = 1 // "10"
+        numberPicker.maxValue = 25 // "250
+        numberPicker.displayedValues = ((10..250 step 10).map { it.toString() }.toTypedArray())
         numberPicker.wrapSelectorWheel = false
         d.setPositiveButton(android.R.string.ok) { dialogInterface, i ->
-            logEvent(LunaEvent(LunaEventType.BABY_BOTTLE, numberPicker.value))
+            logEvent(LunaEvent(LunaEventType.BABY_BOTTLE, numberPicker.value * 10))
         }
         d.setNegativeButton(android.R.string.cancel) { dialogInterface, i -> dialogInterface.dismiss() }
         val alertDialog = d.create()

@@ -1,4 +1,4 @@
-package it.danieleverducci.lunatracker
+package it.danieleverducci.lunatracker.entities
 
 import java.util.Date
 
@@ -10,6 +10,10 @@ class LunaEvent(
 
     init {
         time = System.currentTimeMillis() / 1000
+    }
+
+    override fun toString(): String {
+        return "${type.toString()} qty: $quantity time: ${Date(time * 1000)}"
     }
 }
 

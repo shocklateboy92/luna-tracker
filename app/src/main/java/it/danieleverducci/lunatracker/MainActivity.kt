@@ -6,16 +6,22 @@ import android.view.View
 import android.widget.NumberPicker
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import it.danieleverducci.lunatracker.entities.Logbook
 import it.danieleverducci.lunatracker.entities.LunaEvent
 import it.danieleverducci.lunatracker.entities.LunaEventType
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
     companion object {
         val TAG = "MainActivity"
     }
 
+    lateinit var logbook: Logbook
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        logbook = Logbook.load(this)
 
         setContentView(R.layout.activity_main)
 
@@ -68,7 +74,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun logEvent(event: LunaEvent) {
-        Log.d(TAG, event.toString())
+        logbook.logs.add(event)
+        logbook.save(this)
     }
 
 }

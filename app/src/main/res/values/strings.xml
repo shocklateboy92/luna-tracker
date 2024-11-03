@@ -5,4 +5,21 @@
 
     <string name="log_bottle_dialog_title">Biberon</string>
     <string name="log_bottle_dialog_description">Inserisci la quantità contenuta nel biberon</string>
+
+    <string name="event_bottle_type">🍼</string>
+    <string name="event_breastfeeding_left_type">🤱 ←</string>
+    <string name="event_breastfeeding_both_type">🤱 ↔</string>
+    <string name="event_breastfeeding_right_type">🤱 →</string>
+    <string name="event_diaperchange_poo_type">🚼 💩</string>
+    <string name="event_diaperchange_pee_type">🚼 💧</string>
+    <string name="event_unknown_type">-</string>
+
+    <string name="event_bottle_desc">Biberon</string>
+    <string name="event_breastfeeding_left_desc">Allatt. al seno (sx)</string>
+    <string name="event_breastfeeding_both_desc">Allatt. al seno</string>
+    <string name="event_breastfeeding_right_desc">Allatt. al seno (dx)</string>
+    <string name="event_diaperchange_poo_desc">Cambio (con cacca)</string>
+    <string name="event_diaperchange_pee_desc">Cambio (con pipì)</string>
+    <string name="event_unknown_desc"></string>
+
 </resources>

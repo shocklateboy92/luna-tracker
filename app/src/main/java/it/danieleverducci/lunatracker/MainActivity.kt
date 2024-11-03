@@ -1,15 +1,16 @@
 package it.danieleverducci.lunatracker
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.NumberPicker
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import it.danieleverducci.lunatracker.adapters.LunaEventRecyclerAdapter
 import it.danieleverducci.lunatracker.entities.Logbook
 import it.danieleverducci.lunatracker.entities.LunaEvent
 import it.danieleverducci.lunatracker.entities.LunaEventType
-import java.io.File
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -17,14 +18,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     lateinit var logbook: Logbook
+    lateinit var adapter: LunaEventRecyclerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Load data
         logbook = Logbook.load(this)
 
+        // Show view
         setContentView(R.layout.activity_main)
 
+        // Show logbook
+        val recyclerView = findViewById<RecyclerView>(R.id.list_events)
+        recyclerView.setLayoutManager(LinearLayoutManager(this))
+        adapter = LunaEventRecyclerAdapter(this)
+        adapter.items.addAll(logbook.logs)
+        recyclerView.adapter = adapter
+
+        // Set listeners
         findViewById<View>(R.id.button_bottle).setOnClickListener { askBabyBottleContent() }
         findViewById<View>(R.id.button_nipple_left).setOnClickListener { logEvent(
             LunaEvent(
@@ -74,7 +86,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun logEvent(event: LunaEvent) {
-        logbook.logs.add(event)
+        adapter.items.add(0, event)
+        adapter.notifyItemInserted(0)
+        logbook.logs.add(0, event)
         logbook.save(this)
     }
 

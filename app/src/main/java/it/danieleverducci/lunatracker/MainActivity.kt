@@ -1,8 +1,10 @@
 package it.danieleverducci.lunatracker
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.widget.NumberPicker
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,6 +13,7 @@ import it.danieleverducci.lunatracker.adapters.LunaEventRecyclerAdapter
 import it.danieleverducci.lunatracker.entities.Logbook
 import it.danieleverducci.lunatracker.entities.LunaEvent
 import it.danieleverducci.lunatracker.entities.LunaEventType
+import kotlinx.coroutines.Runnable
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -19,6 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var logbook: Logbook
     lateinit var adapter: LunaEventRecyclerAdapter
+    lateinit var recyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Show logbook
-        val recyclerView = findViewById<RecyclerView>(R.id.list_events)
+        recyclerView = findViewById<RecyclerView>(R.id.list_events)
         recyclerView.setLayoutManager(LinearLayoutManager(this))
         adapter = LunaEventRecyclerAdapter(this)
         adapter.items.addAll(logbook.logs)
@@ -65,6 +69,13 @@ class MainActivity : AppCompatActivity() {
         ) }
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        // Update list dates
+        adapter.notifyDataSetChanged()
+    }
+
     fun askBabyBottleContent() {
         // Show number picker dialog
         val d = AlertDialog.Builder(this)
@@ -88,8 +99,12 @@ class MainActivity : AppCompatActivity() {
     fun logEvent(event: LunaEvent) {
         adapter.items.add(0, event)
         adapter.notifyItemInserted(0)
+        recyclerView.smoothScrollToPosition(0)
+
         logbook.logs.add(0, event)
         logbook.save(this)
+
+        Toast.makeText(this, R.string.toast_event_added, Toast.LENGTH_SHORT).show()
     }
 
 }

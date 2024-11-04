@@ -58,7 +58,12 @@ class LunaEventRecyclerAdapter: RecyclerView.Adapter<LunaEventRecyclerAdapter.Lu
             }
         )
         holder.quantity.text = if ((item.quantity ?: 0) > 0) item.quantity.toString() else ""
-        holder.time.text = DateUtils.getRelativeTimeSpanString(item.time * 1000)
+        // holder.time.text = DateUtils.getRelativeTimeSpanString(item.time * 1000)
+        holder.time.text = DateUtils.getRelativeTimeSpanString(
+            item.time * 1000,
+            System.currentTimeMillis(),
+            DateUtils.MINUTE_IN_MILLIS,
+            DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_ABBREV_MONTH or DateUtils.FORMAT_SHOW_TIME)
     }
 
     override fun getItemCount(): Int {

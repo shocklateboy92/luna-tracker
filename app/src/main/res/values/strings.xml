@@ -23,4 +23,6 @@
     <string name="event_diaperchange_pee_desc">Cambio (con pipì)</string>
     <string name="event_unknown_desc"></string>
 
+    <string name="toast_event_added">Evento aggiunto!</string>
+
 </resources>

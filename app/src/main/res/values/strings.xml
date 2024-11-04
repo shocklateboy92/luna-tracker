@@ -7,7 +7,11 @@
     <string name="log_bottle_dialog_title">Biberon</string>
     <string name="log_bottle_dialog_description">Inserisci la quantità contenuta nel biberon</string>
 
+    <string name="log_weight_dialog_title">Pesata</string>
+    <string name="log_weight_dialog_description">Inserisci il peso rilevato</string>
+
     <string name="event_bottle_type">🍼</string>
+    <string name="event_scale_type">⚖️</string>
     <string name="event_breastfeeding_left_type">🤱 ←</string>
     <string name="event_breastfeeding_both_type">🤱 ↔</string>
     <string name="event_breastfeeding_right_type">🤱 →</string>
@@ -16,6 +20,7 @@
     <string name="event_unknown_type">-</string>
 
     <string name="event_bottle_desc">Biberon</string>
+    <string name="event_scale_desc">Pesata</string>
     <string name="event_breastfeeding_left_desc">Allatt. al seno (sx)</string>
     <string name="event_breastfeeding_both_desc">Allatt. al seno</string>
     <string name="event_breastfeeding_right_desc">Allatt. al seno (dx)</string>
@@ -24,5 +29,11 @@
     <string name="event_unknown_desc"></string>
 
     <string name="toast_event_added">Evento aggiunto!</string>
+    <string name="toast_integer_error">Valore non valido. Inserire un numero intero.</string>
 
+    <string name="now">adesso</string>
+    <string name="hour_ago">ora</string>
+    <string name="hours_ago">ore</string>
+    <string name="minute_ago">min</string>
+    <string name="minutes_ago">min</string>
 </resources>

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.widget.NumberPicker
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -23,9 +24,15 @@ class MainActivity : AppCompatActivity() {
     lateinit var logbook: Logbook
     lateinit var adapter: LunaEventRecyclerAdapter
     lateinit var recyclerView: RecyclerView
+    lateinit var handler: Handler
+    val updateListRunnable: Runnable = Runnable {
+        adapter.notifyDataSetChanged()
+        handler.postDelayed(updateListRunnable, 1000*30)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        handler = Handler(mainLooper)
 
         // Load data
         logbook = Logbook.load(this)
@@ -42,6 +49,7 @@ class MainActivity : AppCompatActivity() {
 
         // Set listeners
         findViewById<View>(R.id.button_bottle).setOnClickListener { askBabyBottleContent() }
+        findViewById<View>(R.id.button_scale).setOnClickListener { askWeightValue() }
         findViewById<View>(R.id.button_nipple_left).setOnClickListener { logEvent(
             LunaEvent(
                 LunaEventType.BREASTFEEDING_LEFT_NIPPLE
@@ -74,6 +82,13 @@ class MainActivity : AppCompatActivity() {
 
         // Update list dates
         adapter.notifyDataSetChanged()
+        handler.postDelayed(updateListRunnable, 1000*30)
+    }
+
+    override fun onStop() {
+        handler.removeCallbacks(updateListRunnable)
+
+        super.onStop()
     }
 
     fun askBabyBottleContent() {
@@ -90,6 +105,26 @@ class MainActivity : AppCompatActivity() {
         numberPicker.wrapSelectorWheel = false
         d.setPositiveButton(android.R.string.ok) { dialogInterface, i ->
             logEvent(LunaEvent(LunaEventType.BABY_BOTTLE, numberPicker.value * 10))
+        }
+        d.setNegativeButton(android.R.string.cancel) { dialogInterface, i -> dialogInterface.dismiss() }
+        val alertDialog = d.create()
+        alertDialog.show()
+    }
+
+    fun askWeightValue() {
+        // Show number picker dialog
+        val d = AlertDialog.Builder(this)
+        val dialogView = layoutInflater.inflate(R.layout.number_edit_dialog, null)
+        d.setTitle(R.string.log_weight_dialog_title)
+        d.setMessage(R.string.log_weight_dialog_description)
+        d.setView(dialogView)
+        val weightET = dialogView.findViewById<TextView>(R.id.dialog_number_edittext)
+        d.setPositiveButton(android.R.string.ok) { dialogInterface, i ->
+            val weight = weightET.text.toString().toIntOrNull()
+            if (weight != null)
+                logEvent(LunaEvent(LunaEventType.WEIGHT, weight))
+            else
+                Toast.makeText(this, R.string.toast_integer_error, Toast.LENGTH_SHORT).show()
         }
         d.setNegativeButton(android.R.string.cancel) { dialogInterface, i -> dialogInterface.dismiss() }
         val alertDialog = d.create()

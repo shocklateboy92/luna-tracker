@@ -21,6 +21,7 @@ class LunaEvent(
         val jo = JSONObject()
         val type = when (type) {
             LunaEventType.BABY_BOTTLE -> "BABY_BOTTLE"
+            LunaEventType.WEIGHT -> "SCALE"
             LunaEventType.BREASTFEEDING_LEFT_NIPPLE -> "BREASTFEEDING_LEFT_NIPPLE"
             LunaEventType.BREASTFEEDING_BOTH_NIPPLE -> "BREASTFEEDING_BOTH_NIPPLE"
             LunaEventType.BREASTFEEDING_RIGHT_NIPPLE -> "BREASTFEEDING_RIGHT_NIPPLE"
@@ -38,6 +39,7 @@ class LunaEvent(
         fun fromJson(j: JSONObject): LunaEvent {
             val type = when (j.getString("type")) {
                 "BABY_BOTTLE" -> LunaEventType.BABY_BOTTLE
+                "SCALE" -> LunaEventType.WEIGHT
                 "BREASTFEEDING_LEFT_NIPPLE" -> LunaEventType.BREASTFEEDING_LEFT_NIPPLE
                 "BREASTFEEDING_BOTH_NIPPLE" -> LunaEventType.BREASTFEEDING_BOTH_NIPPLE
                 "BREASTFEEDING_RIGHT_NIPPLE" -> LunaEventType.BREASTFEEDING_RIGHT_NIPPLE
@@ -56,6 +58,7 @@ class LunaEvent(
 
 enum class LunaEventType {
     BABY_BOTTLE,
+    WEIGHT,
     BREASTFEEDING_LEFT_NIPPLE,
     BREASTFEEDING_BOTH_NIPPLE,
     BREASTFEEDING_RIGHT_NIPPLE,

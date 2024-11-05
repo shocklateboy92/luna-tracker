@@ -1,13 +1,16 @@
 package it.danieleverducci.lunatracker
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
+import android.preference.PreferenceManager
 import android.view.View
 import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import it.danieleverducci.lunatracker.adapters.LunaEventRecyclerAdapter
@@ -19,6 +22,8 @@ import kotlinx.coroutines.Runnable
 class MainActivity : AppCompatActivity() {
     companion object {
         val TAG = "MainActivity"
+        val SHARED_PREFS_FILE_NAME = "lunasettings"
+        val SHARED_PREFS_BB_CONTENT = "bbcontent"
     }
 
     lateinit var logbook: Logbook
@@ -103,8 +108,10 @@ class MainActivity : AppCompatActivity() {
         numberPicker.maxValue = 25 // "250
         numberPicker.displayedValues = ((10..250 step 10).map { it.toString() }.toTypedArray())
         numberPicker.wrapSelectorWheel = false
+        numberPicker.value = getSharedPreferences(SHARED_PREFS_FILE_NAME, MODE_PRIVATE).getInt(SHARED_PREFS_BB_CONTENT, 1)
         d.setPositiveButton(android.R.string.ok) { dialogInterface, i ->
             logEvent(LunaEvent(LunaEventType.BABY_BOTTLE, numberPicker.value * 10))
+            getSharedPreferences(SHARED_PREFS_FILE_NAME, MODE_PRIVATE).edit().putInt(SHARED_PREFS_BB_CONTENT, numberPicker.value).commit()
         }
         d.setNegativeButton(android.R.string.cancel) { dialogInterface, i -> dialogInterface.dismiss() }
         val alertDialog = d.create()

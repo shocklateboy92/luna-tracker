@@ -1,22 +1,25 @@
 package it.danieleverducci.lunatracker
 
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
-import android.preference.PreferenceManager
+import android.util.Log
 import android.view.View
 import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.edit
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import it.danieleverducci.lunatracker.adapters.LunaEventRecyclerAdapter
 import it.danieleverducci.lunatracker.entities.Logbook
 import it.danieleverducci.lunatracker.entities.LunaEvent
 import it.danieleverducci.lunatracker.entities.LunaEventType
+import it.danieleverducci.lunatracker.repository.LogbookLoadedListener
+import it.danieleverducci.lunatracker.repository.LogbookRepository
+import it.danieleverducci.lunatracker.repository.LogbookSavedListener
+import it.danieleverducci.lunatracker.repository.WebDAVLogbookRepository
 import kotlinx.coroutines.Runnable
 
 class MainActivity : AppCompatActivity() {
@@ -28,28 +31,30 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var logbook: Logbook
     lateinit var adapter: LunaEventRecyclerAdapter
+    lateinit var progressIndicator: LinearProgressIndicator
     lateinit var recyclerView: RecyclerView
     lateinit var handler: Handler
     val updateListRunnable: Runnable = Runnable {
-        adapter.notifyDataSetChanged()
-        handler.postDelayed(updateListRunnable, 1000*30)
+        loadLogbook()
+        handler.postDelayed(updateListRunnable, 1000*60)
     }
+    val logbookRepo: LogbookRepository = WebDAVLogbookRepository(   // TODO: support also FileLogbookRepository
+        TemporaryHardcodedCredentials.URL,
+        TemporaryHardcodedCredentials.USERNAME,
+        TemporaryHardcodedCredentials.PASSWORD
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         handler = Handler(mainLooper)
-
-        // Load data
-        logbook = Logbook.load(this)
+        adapter = LunaEventRecyclerAdapter(this)
 
         // Show view
         setContentView(R.layout.activity_main)
 
-        // Show logbook
+        progressIndicator = findViewById<LinearProgressIndicator>(R.id.progress_indicator)
         recyclerView = findViewById<RecyclerView>(R.id.list_events)
-        recyclerView.setLayoutManager(LinearLayoutManager(this))
-        adapter = LunaEventRecyclerAdapter(this)
-        adapter.items.addAll(logbook.logs)
+        recyclerView.setLayoutManager(LinearLayoutManager(applicationContext))
         recyclerView.adapter = adapter
 
         // Set listeners
@@ -82,11 +87,18 @@ class MainActivity : AppCompatActivity() {
         ) }
     }
 
+    fun showLogbook() {
+        // Show logbook
+        adapter.items.clear()
+        adapter.items.addAll(logbook.logs)
+        adapter.notifyDataSetChanged()
+    }
+
     override fun onStart() {
         super.onStart()
 
         // Update list dates
-        adapter.notifyDataSetChanged()
+        loadLogbook()
         handler.postDelayed(updateListRunnable, 1000*30)
     }
 
@@ -138,13 +150,52 @@ class MainActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
+    fun loadLogbook() {
+        // Load data
+        progressIndicator.visibility = View.VISIBLE
+        logbookRepo.loadLogbook(this, object: LogbookLoadedListener{
+            override fun onLogbookLoaded(lb: Logbook) {
+                runOnUiThread({
+                    progressIndicator.visibility = View.INVISIBLE
+                    logbook = lb
+                    showLogbook()
+                })
+            }
+
+            override fun onError(error: String) {
+                runOnUiThread({
+                    progressIndicator.visibility = View.INVISIBLE
+                    Log.e(TAG, "Unable to load logbook. Create a new one.")
+                    logbook = Logbook()
+                    showLogbook()
+                })
+            }
+        })
+    }
+
     fun logEvent(event: LunaEvent) {
         adapter.items.add(0, event)
         adapter.notifyItemInserted(0)
         recyclerView.smoothScrollToPosition(0)
 
+        progressIndicator.visibility = View.VISIBLE
         logbook.logs.add(0, event)
-        logbook.save(this)
+        logbookRepo.saveLogbook(this, logbook, object: LogbookSavedListener{
+            override fun onLogbookSaved() {
+                Log.d(TAG, "Logbook saved")
+                runOnUiThread({
+                    progressIndicator.visibility = View.INVISIBLE
+                })
+            }
+
+            override fun onError(error: String) {
+                Log.e(TAG, "ERROR: Logbook was NOT saved!")
+                runOnUiThread({
+                    progressIndicator.visibility = View.INVISIBLE
+                })
+            }
+
+        })
 
         Toast.makeText(this, R.string.toast_event_added, Toast.LENGTH_SHORT).show()
     }

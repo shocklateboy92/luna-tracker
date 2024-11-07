@@ -103,3 +103,6 @@ app/release/output-metadata.json
 .idea/misc.xml
 .idea/deploymentTargetSelector.xml
 .idea/other.xml
+
+# Other
+app/src/main/java/it/danieleverducci/lunatracker/TemporaryHardcodedCredentials.kt

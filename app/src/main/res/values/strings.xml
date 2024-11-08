@@ -36,4 +36,19 @@
     <string name="hours_ago">ore</string>
     <string name="minute_ago">min</string>
     <string name="minutes_ago">min</string>
+
+    <string name="settings_title">Impostazioni</string>
+    <string name="settings_storage">Scegli dove l\'app salva i dati</string>
+    <string name="settings_storage_local">Sul dispositivo</string>
+    <string name="settings_storage_local_desc">La soluzione più privacy-friendly: i dati non escono mai dal tuo dispositivo</string>
+    <string name="settings_storage_dav">Su un server WebDAV</string>
+    <string name="settings_storage_dav_desc">Puoi usare un qualunque servizio che supporti WebDAV (come ad esempio Nextcloud, Owncloud, Dropbox, Box...) per salvare i dati. In questo modo puoi sincronizzarli tra più dispositivi, ad esempio quello del papà, della mamma, dei nonni... Ti servirà l\'url WebDAV, che trovi nella documentazione del tuo provider (ad es. in Nextcloud è nelle impostazioni di Files)</string>
+    <string name="settings_storage_dav_url">Url WebDAV</string>
+    <string name="settings_storage_dav_url_hint">https://</string>
+    <string name="settings_storage_dav_user">Username</string>
+    <string name="settings_storage_dav_pass">Password</string>
+    <string name="settings_sync_all">Esiste già un salvataggio sul server. Vuoi sovrascriverlo?</string>
+    <string name="settings_sync_all_yes">Carica i dati del dispositivo sul server</string>
+    <string name="settings_sync_all_no">Sarica i dati dal server sul dispositivo</string>
+    <string name="settings_sync_all_cancel">Annulla</string>
 </resources>

@@ -41,6 +41,7 @@
     <string name="no_connection">Nessuna connessione</string>
     <string name="no_connection_explain">Impossibile raggiungere il servizio WebDAV</string>
     <string name="no_connection_go_to_settings">Impostazioni</string>
+    <string name="no_connection_retry">Riprova</string>
 
     <string name="settings_title">Impostazioni</string>
     <string name="settings_storage">Scegli dove l\'app salva i dati</string>

@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var progressIndicator: LinearProgressIndicator
     lateinit var recyclerView: RecyclerView
     lateinit var handler: Handler
+    var savingEvent = false
     val updateListRunnable: Runnable = Runnable {
         loadLogbook()
         handler.postDelayed(updateListRunnable, 1000*60)
@@ -91,6 +92,12 @@ class MainActivity : AppCompatActivity() {
         })
         findViewById<View>(R.id.button_settings).setOnClickListener({
             showSettings()
+        })
+        findViewById<View>(R.id.button_no_connection_retry).setOnClickListener({
+            loadLogbook()
+        })
+        findViewById<View>(R.id.button_sync).setOnClickListener({
+            loadLogbook()
         })
     }
 
@@ -167,12 +174,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun loadLogbook() {
+        if (savingEvent)
+            return
+
         // Load data
         progressIndicator.visibility = View.VISIBLE
         logbookRepo.loadLogbook(this, object: LogbookLoadedListener{
             override fun onLogbookLoaded(lb: Logbook) {
                 runOnUiThread({
                     progressIndicator.visibility = View.INVISIBLE
+                    findViewById<View>(R.id.no_connection_screen).visibility = View.GONE
                     logbook = lb
                     showLogbook()
                 })
@@ -192,6 +203,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun logEvent(event: LunaEvent) {
+        savingEvent = true
         adapter.items.add(0, event)
         adapter.notifyItemInserted(0)
         recyclerView.smoothScrollToPosition(0)
@@ -205,6 +217,7 @@ class MainActivity : AppCompatActivity() {
                     progressIndicator.visibility = View.INVISIBLE
 
                     Toast.makeText(this@MainActivity, R.string.toast_event_added, Toast.LENGTH_SHORT).show()
+                    savingEvent = false
                 })
             }
 
@@ -216,6 +229,7 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this@MainActivity, R.string.toast_event_add_error, Toast.LENGTH_SHORT).show()
                     adapter.items.remove(event)
                     adapter.notifyDataSetChanged()
+                    savingEvent = false
                 })
             }
 

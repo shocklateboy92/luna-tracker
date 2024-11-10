@@ -13,7 +13,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_title"
-            android:textSize="28sp"/>
+            android:textSize="28sp"
+            android:textColor="@color/accent"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -102,18 +103,19 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/settings_save"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@android:string/ok"/>
-
-                <Button
                     android:id="@+id/settings_cancel"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@android:string/cancel"/>
+
+                <Button
+                    android:id="@+id/settings_save"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/accent"
+                    android:text="@android:string/ok"/>
 
             </LinearLayout>
         </RadioGroup>

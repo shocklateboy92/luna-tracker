@@ -9,6 +9,7 @@ import it.danieleverducci.lunatracker.entities.LunaEvent
 import kotlinx.coroutines.Runnable
 import org.json.JSONArray
 import java.io.BufferedReader
+import java.io.IOException
 import kotlin.io.bufferedReader
 
 class WebDAVLogbookRepository(val webDavURL: String, val username: String, val password: String): LogbookRepository {
@@ -30,6 +31,7 @@ class WebDAVLogbookRepository(val webDavURL: String, val username: String, val p
             try {
                 val inputStream = sardine.get("$webDavURL/$FILE_NAME")
                 val json = inputStream.bufferedReader().use(BufferedReader::readText)
+                inputStream.close()
                 val ja = JSONArray(json)
                 val logbook = Logbook()
                 for (i in 0 until ja.length()) {
@@ -38,7 +40,7 @@ class WebDAVLogbookRepository(val webDavURL: String, val username: String, val p
                     logbook.logs.add(evt)
                 }
                 listener.onLogbookLoaded(logbook)
-            } catch (e: SardineException) {
+            } catch (e: IOException) {
                 listener.onError(e.toString())
             }
         }).start()

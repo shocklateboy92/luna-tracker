@@ -3,4 +3,6 @@
     <color name="accent">#FFE68F</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="translucent">#c000</color>
+    <color name="grey">#ccc</color>
 </resources>

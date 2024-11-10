@@ -28,7 +28,8 @@
     <string name="event_diaperchange_pee_desc">Cambio (con pipì)</string>
     <string name="event_unknown_desc"></string>
 
-    <string name="toast_event_added">Evento aggiunto!</string>
+    <string name="toast_event_added">Evento aggiunto</string>
+    <string name="toast_event_add_error">Impossibile aggiungere l\'evento</string>
     <string name="toast_integer_error">Valore non valido. Inserire un numero intero.</string>
 
     <string name="now">adesso</string>
@@ -36,6 +37,10 @@
     <string name="hours_ago">ore</string>
     <string name="minute_ago">min</string>
     <string name="minutes_ago">min</string>
+
+    <string name="no_connection">Nessuna connessione</string>
+    <string name="no_connection_explain">Impossibile raggiungere il servizio WebDAV</string>
+    <string name="no_connection_go_to_settings">Impostazioni</string>
 
     <string name="settings_title">Impostazioni</string>
     <string name="settings_storage">Scegli dove l\'app salva i dati</string>

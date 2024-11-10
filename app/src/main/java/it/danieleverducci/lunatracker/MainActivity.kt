@@ -1,5 +1,6 @@
 package it.danieleverducci.lunatracker
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -85,6 +86,18 @@ class MainActivity : AppCompatActivity() {
                 LunaEventType.DIAPERCHANGE_PEE
             )
         ) }
+        findViewById<View>(R.id.button_no_connection_settings).setOnClickListener({
+            showSettings()
+        })
+        findViewById<View>(R.id.button_settings).setOnClickListener({
+            showSettings()
+        })
+    }
+
+    fun showSettings() {
+        val i = Intent(this, SettingsActivity::class.java)
+        startActivity(i)
+
     }
 
     fun showLogbook() {
@@ -98,6 +111,9 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
 
         // Update list dates
+        adapter.notifyDataSetChanged()
+
+        // Reload data
         loadLogbook()
         handler.postDelayed(updateListRunnable, 1000*30)
     }
@@ -165,7 +181,9 @@ class MainActivity : AppCompatActivity() {
             override fun onError(error: String) {
                 runOnUiThread({
                     progressIndicator.visibility = View.INVISIBLE
-                    Log.e(TAG, "Unable to load logbook. Create a new one.")
+                    findViewById<View>(R.id.no_connection_screen).visibility = View.VISIBLE
+
+                    Log.e(TAG, "Unable to load logbook: $error . Created a new one.")
                     logbook = Logbook()
                     showLogbook()
                 })
@@ -185,6 +203,8 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "Logbook saved")
                 runOnUiThread({
                     progressIndicator.visibility = View.INVISIBLE
+
+                    Toast.makeText(this@MainActivity, R.string.toast_event_added, Toast.LENGTH_SHORT).show()
                 })
             }
 
@@ -192,12 +212,14 @@ class MainActivity : AppCompatActivity() {
                 Log.e(TAG, "ERROR: Logbook was NOT saved!")
                 runOnUiThread({
                     progressIndicator.visibility = View.INVISIBLE
+
+                    Toast.makeText(this@MainActivity, R.string.toast_event_add_error, Toast.LENGTH_SHORT).show()
+                    adapter.items.remove(event)
+                    adapter.notifyDataSetChanged()
                 })
             }
 
         })
-
-        Toast.makeText(this, R.string.toast_event_added, Toast.LENGTH_SHORT).show()
     }
 
 }

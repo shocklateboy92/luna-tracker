@@ -17,6 +17,7 @@ import it.danieleverducci.lunatracker.adapters.LunaEventRecyclerAdapter
 import it.danieleverducci.lunatracker.entities.Logbook
 import it.danieleverducci.lunatracker.entities.LunaEvent
 import it.danieleverducci.lunatracker.entities.LunaEventType
+import it.danieleverducci.lunatracker.repository.LocalSettingsRepository
 import it.danieleverducci.lunatracker.repository.LogbookLoadedListener
 import it.danieleverducci.lunatracker.repository.LogbookRepository
 import it.danieleverducci.lunatracker.repository.LogbookSavedListener
@@ -26,8 +27,6 @@ import kotlinx.coroutines.Runnable
 class MainActivity : AppCompatActivity() {
     companion object {
         val TAG = "MainActivity"
-        val SHARED_PREFS_FILE_NAME = "lunasettings"
-        val SHARED_PREFS_BB_CONTENT = "bbcontent"
     }
 
     lateinit var logbook: Logbook
@@ -40,14 +39,31 @@ class MainActivity : AppCompatActivity() {
         loadLogbook()
         handler.postDelayed(updateListRunnable, 1000*60)
     }
-    val logbookRepo: LogbookRepository = WebDAVLogbookRepository(   // TODO: support also FileLogbookRepository
-        TemporaryHardcodedCredentials.URL,
-        TemporaryHardcodedCredentials.USERNAME,
-        TemporaryHardcodedCredentials.PASSWORD
-    )
+    lateinit var logbookRepo: LogbookRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val localSettings = LocalSettingsRepository(this)
+
+        // TEMPORARY: Save credentials (prepare for update with settings enabled)
+        localSettings.saveWebdavCredentials(
+            TemporaryHardcodedCredentials.URL,
+            TemporaryHardcodedCredentials.USERNAME,
+            TemporaryHardcodedCredentials.PASSWORD
+        )
+        // END TEMPORARY
+
+        val webDavCredentials = localSettings.loadWebdavCredentials()
+        if (webDavCredentials == null) {
+            TODO("Not supported ATM (TODO: apply settings)")
+        }
+        logbookRepo = WebDAVLogbookRepository(   // TODO: support also FileLogbookRepository
+            webDavCredentials[0],
+            webDavCredentials[1],
+            webDavCredentials[2]
+        )
+
         handler = Handler(mainLooper)
         adapter = LunaEventRecyclerAdapter(this)
 
@@ -133,6 +149,7 @@ class MainActivity : AppCompatActivity() {
 
     fun askBabyBottleContent() {
         // Show number picker dialog
+        val localSettings = LocalSettingsRepository(this)
         val d = AlertDialog.Builder(this)
         val dialogView = layoutInflater.inflate(R.layout.number_picker_dialog, null)
         d.setTitle(R.string.log_bottle_dialog_title)
@@ -143,10 +160,10 @@ class MainActivity : AppCompatActivity() {
         numberPicker.maxValue = 25 // "250
         numberPicker.displayedValues = ((10..250 step 10).map { it.toString() }.toTypedArray())
         numberPicker.wrapSelectorWheel = false
-        numberPicker.value = getSharedPreferences(SHARED_PREFS_FILE_NAME, MODE_PRIVATE).getInt(SHARED_PREFS_BB_CONTENT, 1)
+        numberPicker.value = localSettings.loadBabyBottleContent()
         d.setPositiveButton(android.R.string.ok) { dialogInterface, i ->
             logEvent(LunaEvent(LunaEventType.BABY_BOTTLE, numberPicker.value * 10))
-            getSharedPreferences(SHARED_PREFS_FILE_NAME, MODE_PRIVATE).edit().putInt(SHARED_PREFS_BB_CONTENT, numberPicker.value).commit()
+            localSettings.saveBabyBottleContent(numberPicker.value)
         }
         d.setNegativeButton(android.R.string.cancel) { dialogInterface, i -> dialogInterface.dismiss() }
         val alertDialog = d.create()

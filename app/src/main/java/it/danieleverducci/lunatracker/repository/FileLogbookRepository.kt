@@ -27,7 +27,7 @@ class FileLogbookRepository: LogbookRepository {
             }
         } catch (e: FileNotFoundException) {
             Log.d(TAG, "No logbook file found")
-            listener.onError(e.toString())
+            listener.onIOError(e)
         }
         listener.onLogbookLoaded(logbook)
     }

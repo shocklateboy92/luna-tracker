@@ -53,8 +53,9 @@
     <string name="settings_storage_dav_url_hint">https://</string>
     <string name="settings_storage_dav_user">Username</string>
     <string name="settings_storage_dav_pass">Password</string>
-    <string name="settings_sync_all">Esiste già un salvataggio sul server. Vuoi sovrascriverlo?</string>
-    <string name="settings_sync_all_yes">Carica i dati del dispositivo sul server</string>
-    <string name="settings_sync_all_no">Sarica i dati dal server sul dispositivo</string>
-    <string name="settings_sync_all_cancel">Annulla</string>
+    <string name="settings_network_error">Impossibile raggiungere il server: </string>
+    <string name="settings_webdav_error_denied">Nome utente o password sbagliati</string>
+    <string name="settings_webdav_error_generic">Si è verificato un errore tentando di accedere al server WebDAV:</string>
+    <string name="settings_json_error">Sul server esiste un salvataggio, ma è corrotto o illeggibile. Cancellare il file </string>
+    <string name="settings_generic_error">Si è verificato un errore: </string>
 </resources>

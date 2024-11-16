@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.progressindicator.LinearProgressIndicator
+import com.thegrizzlylabs.sardineandroid.impl.SardineException
 import it.danieleverducci.lunatracker.adapters.LunaEventRecyclerAdapter
 import it.danieleverducci.lunatracker.entities.Logbook
 import it.danieleverducci.lunatracker.entities.LunaEvent
@@ -23,6 +24,8 @@ import it.danieleverducci.lunatracker.repository.LogbookRepository
 import it.danieleverducci.lunatracker.repository.LogbookSavedListener
 import it.danieleverducci.lunatracker.repository.WebDAVLogbookRepository
 import kotlinx.coroutines.Runnable
+import okio.IOException
+import org.json.JSONException
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -45,15 +48,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         val localSettings = LocalSettingsRepository(this)
-
-        // TEMPORARY: Save credentials (prepare for update with settings enabled)
-        localSettings.saveWebdavCredentials(
-            TemporaryHardcodedCredentials.URL,
-            TemporaryHardcodedCredentials.USERNAME,
-            TemporaryHardcodedCredentials.PASSWORD
-        )
-        // END TEMPORARY
-
         val webDavCredentials = localSettings.loadWebdavCredentials()
         if (webDavCredentials == null) {
             TODO("Not supported ATM (TODO: apply settings)")
@@ -206,16 +200,28 @@ class MainActivity : AppCompatActivity() {
                 })
             }
 
-            override fun onError(error: String) {
-                runOnUiThread({
-                    progressIndicator.visibility = View.INVISIBLE
-                    findViewById<View>(R.id.no_connection_screen).visibility = View.VISIBLE
-
-                    Log.e(TAG, "Unable to load logbook: $error . Created a new one.")
-                    logbook = Logbook()
-                    showLogbook()
-                })
+            override fun onIOError(error: IOException) {
+                onRepoError(error) // TODO: Meaningful message
             }
+
+            override fun onWebDAVError(error: SardineException) {
+                onRepoError(error) // TODO: Meaningful message
+            }
+
+            override fun onJSONError(error: JSONException) {
+                onRepoError(error) // TODO: Meaningful message
+            }
+        })
+    }
+
+    fun onRepoError(e: Exception){
+        runOnUiThread({
+            progressIndicator.visibility = View.INVISIBLE
+            findViewById<View>(R.id.no_connection_screen).visibility = View.VISIBLE
+
+            Log.e(TAG, "Unable to load logbook: ${e.toString()} . Created a new one.")
+            logbook = Logbook()
+            showLogbook()
         })
     }
 

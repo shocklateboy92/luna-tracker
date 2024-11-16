@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -66,7 +67,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
-                android:hint="@string/settings_storage_dav_url_hint"/>
+                android:hint="@string/settings_storage_dav_url_hint"
+                android:inputType="textUri"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -80,7 +82,8 @@
                 android:id="@+id/settings_data_webdav_user"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"/>
+                android:layout_marginLeft="30dp"
+                android:inputType="textEmailAddress"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -94,12 +97,21 @@
                 android:id="@+id/settings_data_webdav_pass"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"/>
+                android:layout_marginLeft="30dp"
+                android:inputType="textPassword"/>
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progress_indicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                app:indicatorColor="@color/accent"
+                android:layout_margin="20dp"
+                android:visibility="invisible"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
                 <Button

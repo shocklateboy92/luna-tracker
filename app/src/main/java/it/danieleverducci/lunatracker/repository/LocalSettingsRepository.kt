@@ -8,10 +8,12 @@ class LocalSettingsRepository(val context: Context) {
     companion object {
         val SHARED_PREFS_FILE_NAME = "lunasettings"
         val SHARED_PREFS_BB_CONTENT = "bbcontent"
+        val SHARED_PREFS_DATA_REPO = "webdav_url"
         val SHARED_PREFS_DAV_URL = "webdav_url"
         val SHARED_PREFS_DAV_USER = "webdav_user"
         val SHARED_PREFS_DAV_PASS = "webdav_password"
     }
+    enum class DATA_REPO {LOCAL_FILE, WEBDAV}
     val sharedPreferences: SharedPreferences
 
     init {
@@ -24,6 +26,27 @@ class LocalSettingsRepository(val context: Context) {
 
     fun loadBabyBottleContent(): Int {
         return sharedPreferences.getInt(SHARED_PREFS_BB_CONTENT, 1)
+    }
+
+    fun saveDataRepository(repo: DATA_REPO) {
+        val spe = sharedPreferences.edit()
+        spe.putString(
+            SHARED_PREFS_DATA_REPO,
+            when (repo) {
+                DATA_REPO.WEBDAV -> "webdav"
+                DATA_REPO.LOCAL_FILE -> "localfile"
+            }
+        )
+        spe.commit()
+    }
+
+    fun loadDataRepository(): DATA_REPO {
+        val repo = sharedPreferences.getString(SHARED_PREFS_DATA_REPO, null)
+        return when (repo) {
+            "webdav" -> DATA_REPO.WEBDAV
+            "localfile" -> DATA_REPO.LOCAL_FILE
+            else -> DATA_REPO.LOCAL_FILE
+        }
     }
 
     fun saveWebdavCredentials(url: String, username: String, password: String) {

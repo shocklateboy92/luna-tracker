@@ -1,15 +1,17 @@
 package it.danieleverducci.lunatracker.repository
 
 import android.content.Context
+import android.util.Log
 import com.thegrizzlylabs.sardineandroid.impl.OkHttpSardine
 import com.thegrizzlylabs.sardineandroid.impl.SardineException
-import it.danieleverducci.lunatracker.TemporaryHardcodedCredentials
 import it.danieleverducci.lunatracker.entities.Logbook
 import it.danieleverducci.lunatracker.entities.LunaEvent
 import kotlinx.coroutines.Runnable
 import org.json.JSONArray
+import org.json.JSONException
 import java.io.BufferedReader
 import java.io.IOException
+import java.net.SocketTimeoutException
 import kotlin.io.bufferedReader
 
 class WebDAVLogbookRepository(val webDavURL: String, val username: String, val password: String): LogbookRepository {
@@ -40,8 +42,20 @@ class WebDAVLogbookRepository(val webDavURL: String, val username: String, val p
                     logbook.logs.add(evt)
                 }
                 listener.onLogbookLoaded(logbook)
+            } catch (e: SardineException) {
+                Log.e(TAG, e.toString())
+                listener.onWebDAVError(e)
             } catch (e: IOException) {
-                listener.onError(e.toString())
+                Log.e(TAG, e.toString())
+                listener.onIOError(e)
+            } catch (e: SocketTimeoutException) {
+                Log.e(TAG, e.toString())
+                listener.onIOError(e)
+            } catch (e: JSONException) {
+                Log.e(TAG, e.toString())
+                listener.onJSONError(e)
+            } catch (e: Exception) {
+                listener.onError(e)
             }
         }).start()
     }
@@ -71,6 +85,6 @@ class WebDAVLogbookRepository(val webDavURL: String, val username: String, val p
     }
 
     private fun getUrl(): String {
-        return "${TemporaryHardcodedCredentials.URL}/$FILE_NAME"
+        return "$webDavURL/$FILE_NAME"
     }
 }

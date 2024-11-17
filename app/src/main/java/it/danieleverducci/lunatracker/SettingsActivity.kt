@@ -1,8 +1,6 @@
 package it.danieleverducci.lunatracker
 
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.util.Log
 import android.view.View
 import android.widget.RadioButton
 import android.widget.TextView
@@ -10,15 +8,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.thegrizzlylabs.sardineandroid.impl.SardineException
-import it.danieleverducci.lunatracker.entities.Logbook
-import it.danieleverducci.lunatracker.repository.FileLogbookRepository
 import it.danieleverducci.lunatracker.repository.LocalSettingsRepository
-import it.danieleverducci.lunatracker.repository.LogbookLoadedListener
 import it.danieleverducci.lunatracker.repository.WebDAVLogbookRepository
 import okio.IOException
 import org.json.JSONException
 
-class SettingsActivity : AppCompatActivity() {
+open class SettingsActivity : AppCompatActivity() {
     protected lateinit var settingsRepository: LocalSettingsRepository
     protected lateinit var radioDataLocal: RadioButton
     protected lateinit var radioDataWebDAV: RadioButton
@@ -71,75 +66,53 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         // Try to connect to WebDAV and check if the save file already exists
-        val logbookRepo = WebDAVLogbookRepository(
+        val webDAVLogbookRepo = WebDAVLogbookRepository(
             textViewWebDAVUrl.text.toString(),
             textViewWebDAVUser.text.toString(),
             textViewWebDAVPass.text.toString()
         )
         progressIndicator.visibility = View.VISIBLE
-        logbookRepo.loadLogbook(this, object: LogbookLoadedListener {
-            override fun onLogbookLoaded(logbook: Logbook) {
-                progressIndicator.visibility = View.INVISIBLE
-                // Save file does exist. Settings valid. Save.
-                saveSettings()
+        webDAVLogbookRepo.createLogbook(this, object: WebDAVLogbookRepository.LogbookCreatedListener{
+            override fun onLogbookCreated() {
+                runOnUiThread({
+                    progressIndicator.visibility = View.INVISIBLE
+                    saveSettings()
+                    Toast.makeText(this@SettingsActivity, R.string.settings_webdav_creation_ok, Toast.LENGTH_SHORT).show()
+                })
             }
 
             override fun onIOError(error: IOException) {
-                // Unable to reach network
                 runOnUiThread({
+                    progressIndicator.visibility = View.INVISIBLE
                     Toast.makeText(this@SettingsActivity, getString(R.string.settings_network_error) + error.toString(), Toast.LENGTH_SHORT).show()
                 })
             }
 
             override fun onWebDAVError(error: SardineException) {
-                // Save file does not exist, upload the local one
                 runOnUiThread({
                     progressIndicator.visibility = View.INVISIBLE
-                    if (error.toString().contains("401")) {
+                    if(error.toString().contains("401")) {
                         Toast.makeText(this@SettingsActivity, getString(R.string.settings_webdav_error_denied), Toast.LENGTH_SHORT).show()
-                    } else if (error.toString().contains("404")) {
-                        // Connection successful, but no existing save. Upload the local one.
-                        val fileLogbookRepo = FileLogbookRepository()
-                        fileLogbookRepo.loadLogbook(this@SettingsActivity, object: LogbookLoadedListener {
-                            override fun onLogbookLoaded(logbook: Logbook) {
-                                TODO("Not yet implemented")
-                            }
-
-                            override fun onIOError(error: IOException) {
-                                TODO("Not yet implemented")
-                            }
-
-                            override fun onWebDAVError(error: SardineException) {
-                                TODO("Not yet implemented")
-                            }
-
-                            override fun onJSONError(error: JSONException) {
-                                TODO("Not yet implemented")
-                            }
-
-                            override fun onError(error: Exception) {
-                                TODO("Not yet implemented")
-                            }
-
-                        })
                     } else {
                         Toast.makeText(this@SettingsActivity, getString(R.string.settings_webdav_error_generic) + error.toString(), Toast.LENGTH_SHORT).show()
                     }
                 })
-
-
             }
 
             override fun onJSONError(error: JSONException) {
-                progressIndicator.visibility = View.INVISIBLE
-                // Save file exists, but is corrupted
-                Toast.makeText(this@SettingsActivity, getString(R.string.settings_json_error) + error.toString(), Toast.LENGTH_SHORT).show()
+                runOnUiThread({
+                    progressIndicator.visibility = View.INVISIBLE
+                    Toast.makeText(this@SettingsActivity, getString(R.string.settings_json_error) + error.toString(), Toast.LENGTH_SHORT).show()
+                })
             }
 
             override fun onError(error: Exception) {
-                progressIndicator.visibility = View.INVISIBLE
-                Toast.makeText(this@SettingsActivity, getString(R.string.settings_generic_error) + error.toString(), Toast.LENGTH_SHORT).show()
+                runOnUiThread({
+                    progressIndicator.visibility = View.INVISIBLE
+                    Toast.makeText(this@SettingsActivity, getString(R.string.settings_generic_error) + error.toString(), Toast.LENGTH_SHORT).show()
+                })
             }
+
         })
     }
 

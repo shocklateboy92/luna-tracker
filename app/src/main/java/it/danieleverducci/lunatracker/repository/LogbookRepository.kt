@@ -21,5 +21,8 @@ interface LogbookLoadedListener {
 
 interface LogbookSavedListener {
     fun onLogbookSaved()
-    fun onError(error: String)
+    fun onIOError(error: IOException)
+    fun onWebDAVError(error: SardineException)
+    fun onJSONError(error: JSONException)
+    fun onError(error: Exception)
 }

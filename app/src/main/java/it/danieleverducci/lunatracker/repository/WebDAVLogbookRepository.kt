@@ -10,6 +10,7 @@ import kotlinx.coroutines.Runnable
 import org.json.JSONArray
 import org.json.JSONException
 import java.io.BufferedReader
+import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.SocketTimeoutException
 import kotlin.io.bufferedReader
@@ -31,16 +32,7 @@ class WebDAVLogbookRepository(val webDavURL: String, val username: String, val p
     override fun loadLogbook(context: Context, listener: LogbookLoadedListener) {
         Thread(Runnable {
             try {
-                val inputStream = sardine.get("$webDavURL/$FILE_NAME")
-                val json = inputStream.bufferedReader().use(BufferedReader::readText)
-                inputStream.close()
-                val ja = JSONArray(json)
-                val logbook = Logbook()
-                for (i in 0 until ja.length()) {
-                    val jo = ja.getJSONObject(i)
-                    val evt = LunaEvent.fromJson(jo)
-                    logbook.logs.add(evt)
-                }
+                val logbook = loadLogbook(context)
                 listener.onLogbookLoaded(logbook)
             } catch (e: SardineException) {
                 Log.e(TAG, e.toString())
@@ -60,31 +52,115 @@ class WebDAVLogbookRepository(val webDavURL: String, val username: String, val p
         }).start()
     }
 
+    private fun loadLogbook(context: Context): Logbook {
+        val inputStream = sardine.get("$webDavURL/$FILE_NAME")
+        val json = inputStream.bufferedReader().use(BufferedReader::readText)
+        inputStream.close()
+        val ja = JSONArray(json)
+        val logbook = Logbook()
+        for (i in 0 until ja.length()) {
+            val jo = ja.getJSONObject(i)
+            val evt = LunaEvent.fromJson(jo)
+            logbook.logs.add(evt)
+        }
+        return logbook
+    }
+
     override fun saveLogbook(context: Context, logbook: Logbook, listener: LogbookSavedListener) {
         Thread(Runnable {
-            // Lock logbook on WebDAV to avoid concurrent changes
-            //sardine.lock(getUrl())
-            // Reload logbook from WebDAV
-            // Merge logbooks (based on time)
-            // Write logbook
-            // Unlock logbook on WebDAV
-            //sardine.unlock(getUrl())
-
-            val ja = JSONArray()
-            for (l in logbook.logs) {
-                ja.put(l.toJson())
-            }
             try {
-                sardine.put(getUrl(), ja.toString().toByteArray())
+                saveLogbook(context, logbook)
                 listener.onLogbookSaved()
             } catch (e: SardineException) {
-                listener.onError(e.toString())
+                Log.e(TAG, e.toString())
+                listener.onWebDAVError(e)
+            } catch (e: IOException) {
+                Log.e(TAG, e.toString())
+                listener.onIOError(e)
+            } catch (e: SocketTimeoutException) {
+                Log.e(TAG, e.toString())
+                listener.onIOError(e)
+            } catch (e: JSONException) {
+                Log.e(TAG, e.toString())
+                listener.onJSONError(e)
+            } catch (e: Exception) {
+                listener.onError(e)
             }
 
         }).start()
     }
 
+    private fun saveLogbook(context: Context, logbook: Logbook) {
+        // Lock logbook on WebDAV to avoid concurrent changes
+        //sardine.lock(getUrl())
+        // Reload logbook from WebDAV
+        // Merge logbooks (based on time)
+        // Write logbook
+        // Unlock logbook on WebDAV
+        //sardine.unlock(getUrl())
+
+        val ja = JSONArray()
+        for (l in logbook.logs) {
+            ja.put(l.toJson())
+        }
+        sardine.put(getUrl(), ja.toString().toByteArray())
+    }
+
+    /**
+     * Connect to server and check if a logbook already exists.
+     * If it does not exist, try to upload the local one (or create a new one).
+     */
+    fun createLogbook(context: Context, listener: LogbookCreatedListener) {
+        Thread(Runnable {
+            try {
+                loadLogbook(context)
+                listener.onLogbookCreated()
+            } catch (e: SardineException) {
+                if (e.toString().contains("404")) {
+                    // Connection successful, but no existing save. Upload the local one.
+                    try {
+                        val flr = FileLogbookRepository()
+                        val logbook = flr.loadLogbook(context)
+                        saveLogbook(context, logbook)
+                        Log.d(TAG, "Local logbook file found, uploaded")
+                        listener.onLogbookCreated()
+                    } catch (e: FileNotFoundException) {
+                        Log.d(TAG, "No local logbook file found, uploading empty file")
+                        saveLogbook(context, Logbook())
+                        listener.onLogbookCreated()
+                    } catch (e: SardineException) {
+                        Log.e(TAG, "Unable to upload logbook: $e")
+                        listener.onWebDAVError(e)
+                    }
+                } else {
+                    Log.e(TAG, e.toString())
+                    listener.onWebDAVError(e)
+                }
+            } catch (e: IOException) {
+                Log.e(TAG, e.toString())
+                listener.onIOError(e)
+            } catch (e: SocketTimeoutException) {
+                Log.e(TAG, e.toString())
+                listener.onIOError(e)
+            } catch (e: JSONException) {
+                Log.e(TAG, e.toString())
+                listener.onJSONError(e)
+            } catch (e: Exception) {
+                listener.onError(e)
+            }
+        }).start()
+    }
+
     private fun getUrl(): String {
         return "$webDavURL/$FILE_NAME"
+    }
+
+
+    interface LogbookCreatedListener {
+        fun onLogbookCreated()
+        fun onIOError(error: okio.IOException)
+        fun onWebDAVError(error: SardineException)
+        fun onJSONError(error: JSONException)
+        fun onError(error: Exception)
     }
 }

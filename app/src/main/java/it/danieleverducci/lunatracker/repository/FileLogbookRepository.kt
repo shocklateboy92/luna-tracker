@@ -15,21 +15,25 @@ class FileLogbookRepository: LogbookRepository {
     }
 
     override fun loadLogbook(context: Context, listener: LogbookLoadedListener) {
-        val logbook = Logbook()
-        val file = File(context.getFilesDir(), "data.json")
         try {
-            val json = FileInputStream(file).bufferedReader().use { it.readText() }
-            val ja = JSONArray(json)
-            for (i in 0 until ja.length()) {
-                val jo = ja.getJSONObject(i)
-                val evt = LunaEvent.fromJson(jo)
-                logbook.logs.add(evt)
-            }
+            listener.onLogbookLoaded(loadLogbook(context))
         } catch (e: FileNotFoundException) {
             Log.d(TAG, "No logbook file found")
             listener.onIOError(e)
         }
-        listener.onLogbookLoaded(logbook)
+    }
+
+    fun loadLogbook(context: Context): Logbook {
+        val logbook = Logbook()
+        val file = File(context.getFilesDir(), "data.json")
+        val json = FileInputStream(file).bufferedReader().use { it.readText() }
+        val ja = JSONArray(json)
+        for (i in 0 until ja.length()) {
+            val jo = ja.getJSONObject(i)
+            val evt = LunaEvent.fromJson(jo)
+            logbook.logs.add(evt)
+        }
+        return logbook
     }
 
     override fun saveLogbook(

@@ -8,7 +8,7 @@ class LocalSettingsRepository(val context: Context) {
     companion object {
         val SHARED_PREFS_FILE_NAME = "lunasettings"
         val SHARED_PREFS_BB_CONTENT = "bbcontent"
-        val SHARED_PREFS_DATA_REPO = "webdav_url"
+        val SHARED_PREFS_DATA_REPO = "data_repo"
         val SHARED_PREFS_DAV_URL = "webdav_url"
         val SHARED_PREFS_DAV_USER = "webdav_user"
         val SHARED_PREFS_DAV_PASS = "webdav_password"

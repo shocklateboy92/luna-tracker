@@ -18,7 +18,10 @@ class FileLogbookRepository: LogbookRepository {
         try {
             listener.onLogbookLoaded(loadLogbook(context))
         } catch (e: FileNotFoundException) {
-            Log.d(TAG, "No logbook file found, will be created at first save")
+            Log.d(TAG, "No logbook file found, create one")
+            val newLogbook = Logbook()
+            saveLogbook(context, newLogbook)
+            listener.onLogbookLoaded(newLogbook)
         }
     }
 
@@ -40,12 +43,16 @@ class FileLogbookRepository: LogbookRepository {
         logbook: Logbook,
         listener: LogbookSavedListener
     ) {
+        saveLogbook(context, logbook)
+        listener.onLogbookSaved()
+    }
+
+    fun saveLogbook(context: Context, logbook: Logbook) {
         val file = File(context.getFilesDir(), "data.json")
         val ja = JSONArray()
         for (l in logbook.logs) {
             ja.put(l.toJson())
         }
         file.writeText(ja.toString())
-        listener.onLogbookSaved()
     }
 }

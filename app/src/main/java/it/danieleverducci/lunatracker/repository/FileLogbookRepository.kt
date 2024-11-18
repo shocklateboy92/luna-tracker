@@ -18,8 +18,7 @@ class FileLogbookRepository: LogbookRepository {
         try {
             listener.onLogbookLoaded(loadLogbook(context))
         } catch (e: FileNotFoundException) {
-            Log.d(TAG, "No logbook file found")
-            listener.onIOError(e)
+            Log.d(TAG, "No logbook file found, will be created at first save")
         }
     }
 

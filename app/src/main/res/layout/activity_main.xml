@@ -191,6 +191,7 @@
             android:text="@string/no_connection"/>
 
         <TextView
+            android:id="@+id/no_connection_screen_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"

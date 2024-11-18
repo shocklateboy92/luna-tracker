@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
@@ -37,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var logbook: Logbook
     lateinit var adapter: LunaEventRecyclerAdapter
     lateinit var progressIndicator: LinearProgressIndicator
+    lateinit var buttonsContainer: ViewGroup
     lateinit var recyclerView: RecyclerView
     lateinit var handler: Handler
     var savingEvent = false
@@ -56,6 +58,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         progressIndicator = findViewById<LinearProgressIndicator>(R.id.progress_indicator)
+        buttonsContainer = findViewById<ViewGroup>(R.id.buttons_container)
         recyclerView = findViewById<RecyclerView>(R.id.list_events)
         recyclerView.setLayoutManager(LinearLayoutManager(applicationContext))
         recyclerView.adapter = adapter
@@ -194,11 +197,11 @@ class MainActivity : AppCompatActivity() {
             return
 
         // Load data
-        progressIndicator.visibility = View.VISIBLE
+        setLoading(true)
         logbookRepo?.loadLogbook(this, object: LogbookLoadedListener{
             override fun onLogbookLoaded(lb: Logbook) {
                 runOnUiThread({
-                    progressIndicator.visibility = View.INVISIBLE
+                    setLoading(false)
                     findViewById<View>(R.id.no_connection_screen).visibility = View.GONE
                     logbook = lb
                     showLogbook()
@@ -207,14 +210,14 @@ class MainActivity : AppCompatActivity() {
 
             override fun onIOError(error: IOException) {
                 runOnUiThread({
-                    progressIndicator.visibility = View.INVISIBLE
+                    setLoading(false)
                     onRepoError(getString(R.string.settings_network_error) + error.toString())
                 })
             }
 
             override fun onWebDAVError(error: SardineException) {
                 runOnUiThread({
-                    progressIndicator.visibility = View.INVISIBLE
+                    setLoading(false)
                     onRepoError(
                         if(error.toString().contains("401")) {
                             getString(R.string.settings_webdav_error_denied)
@@ -227,14 +230,14 @@ class MainActivity : AppCompatActivity() {
 
             override fun onJSONError(error: JSONException) {
                 runOnUiThread({
-                    progressIndicator.visibility = View.INVISIBLE
+                    setLoading(false)
                     onRepoError(getString(R.string.settings_json_error) + error.toString())
                 })
             }
 
             override fun onError(error: Exception) {
                 runOnUiThread({
-                    progressIndicator.visibility = View.INVISIBLE
+                    setLoading(false)
                     onRepoError(getString(R.string.settings_generic_error) + error.toString())
                 })
             }
@@ -244,34 +247,34 @@ class MainActivity : AppCompatActivity() {
 
     fun onRepoError(message: String){
         runOnUiThread({
-            progressIndicator.visibility = View.INVISIBLE
+            setLoading(false)
             findViewById<View>(R.id.no_connection_screen).visibility = View.VISIBLE
             findViewById<TextView>(R.id.no_connection_screen_message).text = message
         })
     }
 
     fun logEvent(event: LunaEvent) {
-        savingEvent = true
+        savingEvent(true)
         adapter.items.add(0, event)
         adapter.notifyItemInserted(0)
         recyclerView.smoothScrollToPosition(0)
 
-        progressIndicator.visibility = View.VISIBLE
+        setLoading(true)
         logbook.logs.add(0, event)
         logbookRepo?.saveLogbook(this, logbook, object: LogbookSavedListener{
             override fun onLogbookSaved() {
                 Log.d(TAG, "Logbook saved")
                 runOnUiThread({
-                    progressIndicator.visibility = View.INVISIBLE
+                    setLoading(false)
 
                     Toast.makeText(this@MainActivity, R.string.toast_event_added, Toast.LENGTH_SHORT).show()
-                    savingEvent = false
+                    savingEvent(false)
                 })
             }
 
             override fun onIOError(error: IOException) {
                 runOnUiThread({
-                    progressIndicator.visibility = View.INVISIBLE
+                    setLoading(false)
                     onRepoError(getString(R.string.settings_network_error) + error.toString())
                     onAddError(event, error.toString())
                 })
@@ -279,7 +282,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onWebDAVError(error: SardineException) {
                 runOnUiThread({
-                    progressIndicator.visibility = View.INVISIBLE
+                    setLoading(false)
                     onRepoError(
                         if(error.toString().contains("401")) {
                             getString(R.string.settings_webdav_error_denied)
@@ -293,7 +296,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onJSONError(error: JSONException) {
                 runOnUiThread({
-                    progressIndicator.visibility = View.INVISIBLE
+                    setLoading(false)
                     onRepoError(getString(R.string.settings_json_error) + error.toString())
                     onAddError(event, error.toString())
                 })
@@ -301,7 +304,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onError(error: Exception) {
                 runOnUiThread({
-                    progressIndicator.visibility = View.INVISIBLE
+                    setLoading(false)
                     onRepoError(getString(R.string.settings_generic_error) + error.toString())
                     onAddError(event, error.toString())
                 })
@@ -312,13 +315,31 @@ class MainActivity : AppCompatActivity() {
     private fun onAddError(event: LunaEvent, error: String) {
         Log.e(TAG, "Logbook was NOT saved! $error")
         runOnUiThread({
-            progressIndicator.visibility = View.INVISIBLE
+            setLoading(false)
 
             Toast.makeText(this@MainActivity, R.string.toast_event_add_error, Toast.LENGTH_SHORT).show()
             adapter.items.remove(event)
             adapter.notifyDataSetChanged()
-            savingEvent = false
+            savingEvent(false)
         })
+    }
+
+    private fun setLoading(loading: Boolean) {
+        if (loading) {
+            progressIndicator.visibility = View.VISIBLE
+        } else {
+            progressIndicator.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun savingEvent(saving: Boolean) {
+        if (saving) {
+            savingEvent = true
+            buttonsContainer.alpha = 0.2f
+        } else {
+            savingEvent = false
+            buttonsContainer.alpha = 1f
+        }
     }
 
 }

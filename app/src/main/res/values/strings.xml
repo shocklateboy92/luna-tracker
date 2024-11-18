@@ -1,14 +1,14 @@
 <resources>
     <string name="app_name">LunaTracker</string>
     <string name="title">🌜 LunaTracker 🌛</string>
-    <string name="log_an_event">Logga un evento:</string>
-    <string name="logbook">Diario di bordo</string>
+    <string name="log_an_event">Log an event:</string>
+    <string name="logbook">Logged events</string>
 
-    <string name="log_bottle_dialog_title">Biberon</string>
-    <string name="log_bottle_dialog_description">Inserisci la quantità contenuta nel biberon</string>
+    <string name="log_bottle_dialog_title">Baby bottle</string>
+    <string name="log_bottle_dialog_description">Insert the quantity contained in the baby bottle</string>
 
-    <string name="log_weight_dialog_title">Pesata</string>
-    <string name="log_weight_dialog_description">Inserisci il peso rilevato</string>
+    <string name="log_weight_dialog_title">Weight</string>
+    <string name="log_weight_dialog_description">Insert the weight</string>
 
     <string name="event_bottle_type">🍼</string>
     <string name="event_scale_type">⚖️</string>
@@ -19,45 +19,45 @@
     <string name="event_diaperchange_pee_type">🚼 💧</string>
     <string name="event_unknown_type">-</string>
 
-    <string name="event_bottle_desc">Biberon</string>
-    <string name="event_scale_desc">Pesata</string>
-    <string name="event_breastfeeding_left_desc">Allatt. al seno (sx)</string>
-    <string name="event_breastfeeding_both_desc">Allatt. al seno</string>
-    <string name="event_breastfeeding_right_desc">Allatt. al seno (dx)</string>
-    <string name="event_diaperchange_poo_desc">Cambio (con cacca)</string>
-    <string name="event_diaperchange_pee_desc">Cambio (con pipì)</string>
+    <string name="event_bottle_desc">Baby bottle</string>
+    <string name="event_scale_desc">Weight</string>
+    <string name="event_breastfeeding_left_desc">Breastfeeding (left)</string>
+    <string name="event_breastfeeding_both_desc">Breastfeeding</string>
+    <string name="event_breastfeeding_right_desc">Breastfeeding (right)</string>
+    <string name="event_diaperchange_poo_desc">Diaper chg (poo)</string>
+    <string name="event_diaperchange_pee_desc">Diaper chg (pee)</string>
     <string name="event_unknown_desc"></string>
 
-    <string name="toast_event_added">Evento aggiunto</string>
-    <string name="toast_event_add_error">Impossibile aggiungere l\'evento</string>
-    <string name="toast_integer_error">Valore non valido. Inserire un numero intero.</string>
+    <string name="toast_event_added">Event logged</string>
+    <string name="toast_event_add_error">Unable to log the event</string>
+    <string name="toast_integer_error">Invalid value. Insert an integer.</string>
 
-    <string name="now">adesso</string>
-    <string name="hour_ago">ora</string>
-    <string name="hours_ago">ore</string>
+    <string name="now">now</string>
+    <string name="hour_ago">hour</string>
+    <string name="hours_ago">hours</string>
     <string name="minute_ago">min</string>
-    <string name="minutes_ago">min</string>
+    <string name="minutes_ago">mins</string>
 
-    <string name="no_connection">Nessuna connessione</string>
-    <string name="no_connection_explain">Impossibile raggiungere il servizio WebDAV</string>
-    <string name="no_connection_go_to_settings">Impostazioni</string>
-    <string name="no_connection_retry">Riprova</string>
+    <string name="no_connection">No connection</string>
+    <string name="no_connection_explain">Unable to reach WebDAV service</string>
+    <string name="no_connection_go_to_settings">Settings</string>
+    <string name="no_connection_retry">Retry</string>
 
-    <string name="settings_title">Impostazioni</string>
-    <string name="settings_storage">Scegli dove l\'app salva i dati</string>
-    <string name="settings_storage_local">Sul dispositivo</string>
-    <string name="settings_storage_local_desc">La soluzione più privacy-friendly: i dati non escono mai dal tuo dispositivo</string>
-    <string name="settings_storage_dav">Su un server WebDAV</string>
-    <string name="settings_storage_dav_desc">Puoi usare un qualunque servizio che supporti WebDAV (come ad esempio Nextcloud, Owncloud, Dropbox, Box...) per salvare i dati. In questo modo puoi sincronizzarli tra più dispositivi, ad esempio quello del papà, della mamma, dei nonni... Ti servirà l\'url WebDAV, che trovi nella documentazione del tuo provider (ad es. in Nextcloud è nelle impostazioni di Files)</string>
-    <string name="settings_storage_dav_url">Url WebDAV</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_storage">Choose where to save data</string>
+    <string name="settings_storage_local">On device</string>
+    <string name="settings_storage_local_desc">Most privacy-friendly solution: data doesn\'t leave your device</string>
+    <string name="settings_storage_dav">On a WebDAV server</string>
+    <string name="settings_storage_dav_desc">You can use any WebDAV service (i.e. Nextcloud, Owncloud, Dropbox, Box...) to save the data. In this way you can syncronize it between more devices, i.e. the dad\'s, the mom\'s, the grandma\'s... You will need the WebDAV url, you can find it in your provider\'s documentation (i.e. in Nextcloud web is in the Files app settings)</string>
+    <string name="settings_storage_dav_url">WebDAV url</string>
     <string name="settings_storage_dav_url_hint">https://</string>
     <string name="settings_storage_dav_user">Username</string>
     <string name="settings_storage_dav_pass">Password</string>
-    <string name="settings_network_error">Impossibile raggiungere il server: </string>
-    <string name="settings_webdav_error_denied">Nome utente o password WebDAV sbagliati</string>
-    <string name="settings_webdav_error_generic">Si è verificato un errore tentando di accedere al server WebDAV:</string>
-    <string name="settings_webdav_creation_error_generic">Impossibile creare un file di salvataggio sul server WebDAV:</string>
-    <string name="settings_webdav_creation_ok">Connessione al server WebDAV avvenuta con successo</string>
-    <string name="settings_json_error">Sul server esiste un salvataggio, ma è corrotto o illeggibile. Cancellare il file </string>
-    <string name="settings_generic_error">Si è verificato un errore: </string>
+    <string name="settings_network_error">Unable to reach server: </string>
+    <string name="settings_webdav_error_denied">Wrong WebDAV user or password</string>
+    <string name="settings_webdav_error_generic">Error while trying to access WebDAV:</string>
+    <string name="settings_webdav_creation_error_generic">Unable to save a file on the WebDAV server:</string>
+    <string name="settings_webdav_creation_ok">Successfully connected with WebDAV server</string>
+    <string name="settings_json_error">There\'s a save file on the server, but is corrupted or unreadable. Please delete it </string>
+    <string name="settings_generic_error">Error: </string>
 </resources>

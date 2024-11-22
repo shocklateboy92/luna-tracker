@@ -29,6 +29,7 @@
     <string name="event_unknown_desc"></string>
 
     <string name="toast_event_added">Evento aggiunto</string>
+    <string name="toast_logbook_saved">Diario salvato</string>
     <string name="toast_event_add_error">Impossibile aggiungere l\'evento</string>
     <string name="toast_integer_error">Valore non valido. Inserire un numero intero.</string>
 
@@ -60,4 +61,11 @@
     <string name="settings_webdav_creation_ok">Connessione al server WebDAV avvenuta con successo</string>
     <string name="settings_json_error">Sul server esiste un salvataggio, ma è corrotto o illeggibile. Cancellare il file </string>
     <string name="settings_generic_error">Si è verificato un errore: </string>
+
+    <string name="trim_logbook_dialog_title">Il tuo diario è bello grande!</string>
+    <string name="trim_logbook_dialog_message_local">Il file del tuo diario sta crescendo molto. Ti suggeriamo di cancellare gli eventi più vecchi per evitare problemi di memoria.</string>
+    <string name="trim_logbook_dialog_message_dav">Il file del tuo diario sta crescendo molto. Ti suggeriamo di cancellare gli eventi più vecchi per evitare problemi di memoria. Se vuoi conservare tutto lo storico, fai un backup del file "lunatracker_logbook.json" sul tuo server WebDAV o rinominalo per mantenerlo così e cominciare un nuovo diario.</string>
+    <string name="trim_logbook_dialog_button_ok">Cancella i più vecchi</string>
+    <string name="trim_logbook_dialog_button_cancel">Ricordamelo dopo</string>
+
 </resources>

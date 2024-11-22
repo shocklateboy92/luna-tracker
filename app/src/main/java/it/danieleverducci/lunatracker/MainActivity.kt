@@ -192,6 +192,26 @@ class MainActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
+    fun askToTrimLogbook() {
+        val d = AlertDialog.Builder(this)
+        d.setTitle(R.string.trim_logbook_dialog_title)
+        d.setMessage(
+            when (LocalSettingsRepository(this).loadDataRepository()) {
+                LocalSettingsRepository.DATA_REPO.WEBDAV -> R.string.trim_logbook_dialog_message_dav
+                else -> R.string.trim_logbook_dialog_message_local
+            }
+        )
+        d.setPositiveButton(R.string.trim_logbook_dialog_button_ok) { dialogInterface, i ->
+            logbook.trim()
+            saveLogbook()
+        }
+        d.setNegativeButton(R.string.trim_logbook_dialog_button_cancel) { dialogInterface, i ->
+            dialogInterface.dismiss()
+        }
+        val alertDialog = d.create()
+        alertDialog.show()
+    }
+
     fun loadLogbook() {
         if (savingEvent)
             return
@@ -261,13 +281,33 @@ class MainActivity : AppCompatActivity() {
 
         setLoading(true)
         logbook.logs.add(0, event)
+        saveLogbook(event)
+
+        // Check logbook size to avoid OOM errors
+        if (logbook.isTooBig()) {
+            askToTrimLogbook()
+        }
+    }
+
+    /**
+     * Saves the logbook. If saving while adding an event, please specify the event so in case
+     * of error can be removed from the list.
+     */
+    fun saveLogbook(lastEventAdded: LunaEvent? = null) {
         logbookRepo?.saveLogbook(this, logbook, object: LogbookSavedListener{
             override fun onLogbookSaved() {
                 Log.d(TAG, "Logbook saved")
                 runOnUiThread({
                     setLoading(false)
 
-                    Toast.makeText(this@MainActivity, R.string.toast_event_added, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@MainActivity,
+                        if (lastEventAdded != null)
+                            R.string.toast_event_added
+                        else
+                            R.string.toast_logbook_saved,
+                        Toast.LENGTH_SHORT
+                    ).show()
                     savingEvent(false)
                 })
             }
@@ -276,7 +316,8 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread({
                     setLoading(false)
                     onRepoError(getString(R.string.settings_network_error) + error.toString())
-                    onAddError(event, error.toString())
+                    if (lastEventAdded != null)
+                        onAddError(lastEventAdded, error.toString())
                 })
             }
 
@@ -290,7 +331,8 @@ class MainActivity : AppCompatActivity() {
                             getString(R.string.settings_webdav_error_generic) + error.toString()
                         }
                     )
-                    onAddError(event, error.toString())
+                    if (lastEventAdded != null)
+                        onAddError(lastEventAdded, error.toString())
                 })
             }
 
@@ -298,7 +340,8 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread({
                     setLoading(false)
                     onRepoError(getString(R.string.settings_json_error) + error.toString())
-                    onAddError(event, error.toString())
+                    if (lastEventAdded != null)
+                        onAddError(lastEventAdded, error.toString())
                 })
             }
 
@@ -306,7 +349,8 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread({
                     setLoading(false)
                     onRepoError(getString(R.string.settings_generic_error) + error.toString())
-                    onAddError(event, error.toString())
+                    if (lastEventAdded != null)
+                        onAddError(lastEventAdded, error.toString())
                 })
             }
         })

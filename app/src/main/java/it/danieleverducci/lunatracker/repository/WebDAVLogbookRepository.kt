@@ -63,6 +63,7 @@ class WebDAVLogbookRepository(val webDavURL: String, val username: String, val p
             val evt = LunaEvent.fromJson(jo)
             logbook.logs.add(evt)
         }
+        Log.d(TAG, "Loaded ${logbook.logs.size} events into logbook")
         return logbook
     }
 

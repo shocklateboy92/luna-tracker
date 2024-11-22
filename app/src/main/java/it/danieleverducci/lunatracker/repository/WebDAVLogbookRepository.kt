@@ -59,9 +59,13 @@ class WebDAVLogbookRepository(val webDavURL: String, val username: String, val p
         val ja = JSONArray(json)
         val logbook = Logbook()
         for (i in 0 until ja.length()) {
-            val jo = ja.getJSONObject(i)
-            val evt = LunaEvent.fromJson(jo)
-            logbook.logs.add(evt)
+            try {
+                val evt: LunaEvent = LunaEvent(ja.getJSONObject(i))
+                logbook.logs.add(evt)
+            } catch (e: IllegalArgumentException) {
+                // Mangled JSON?
+                throw JSONException(e.toString())
+            }
         }
         Log.d(TAG, "Loaded ${logbook.logs.size} events into logbook")
         return logbook

@@ -15,11 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.thegrizzlylabs.sardineandroid.impl.SardineException
-import it.danieleverducci.lunatracker.SettingsActivity
 import it.danieleverducci.lunatracker.adapters.LunaEventRecyclerAdapter
 import it.danieleverducci.lunatracker.entities.Logbook
 import it.danieleverducci.lunatracker.entities.LunaEvent
-import it.danieleverducci.lunatracker.entities.LunaEventType
 import it.danieleverducci.lunatracker.repository.FileLogbookRepository
 import it.danieleverducci.lunatracker.repository.LocalSettingsRepository
 import it.danieleverducci.lunatracker.repository.LogbookLoadedListener
@@ -68,27 +66,27 @@ class MainActivity : AppCompatActivity() {
         findViewById<View>(R.id.button_scale).setOnClickListener { askWeightValue() }
         findViewById<View>(R.id.button_nipple_left).setOnClickListener { logEvent(
             LunaEvent(
-                LunaEventType.BREASTFEEDING_LEFT_NIPPLE
+                LunaEvent.TYPE_BREASTFEEDING_LEFT_NIPPLE
             )
         ) }
         findViewById<View>(R.id.button_nipple_both).setOnClickListener { logEvent(
             LunaEvent(
-                LunaEventType.BREASTFEEDING_BOTH_NIPPLE
+                LunaEvent.TYPE_BREASTFEEDING_BOTH_NIPPLE
             )
         ) }
         findViewById<View>(R.id.button_nipple_right).setOnClickListener { logEvent(
             LunaEvent(
-                LunaEventType.BREASTFEEDING_RIGHT_NIPPLE
+                LunaEvent.TYPE_BREASTFEEDING_RIGHT_NIPPLE
             )
         ) }
         findViewById<View>(R.id.button_change_poo).setOnClickListener { logEvent(
             LunaEvent(
-                LunaEventType.DIAPERCHANGE_POO
+                LunaEvent.TYPE_DIAPERCHANGE_POO
             )
         ) }
         findViewById<View>(R.id.button_change_pee).setOnClickListener { logEvent(
             LunaEvent(
-                LunaEventType.DIAPERCHANGE_PEE
+                LunaEvent.TYPE_DIAPERCHANGE_PEE
             )
         ) }
         findViewById<View>(R.id.button_no_connection_settings).setOnClickListener({
@@ -164,7 +162,7 @@ class MainActivity : AppCompatActivity() {
         numberPicker.wrapSelectorWheel = false
         numberPicker.value = localSettings.loadBabyBottleContent()
         d.setPositiveButton(android.R.string.ok) { dialogInterface, i ->
-            logEvent(LunaEvent(LunaEventType.BABY_BOTTLE, numberPicker.value * 10))
+            logEvent(LunaEvent(LunaEvent.TYPE_BABY_BOTTLE, numberPicker.value * 10))
             localSettings.saveBabyBottleContent(numberPicker.value)
         }
         d.setNegativeButton(android.R.string.cancel) { dialogInterface, i -> dialogInterface.dismiss() }
@@ -183,7 +181,7 @@ class MainActivity : AppCompatActivity() {
         d.setPositiveButton(android.R.string.ok) { dialogInterface, i ->
             val weight = weightET.text.toString().toIntOrNull()
             if (weight != null)
-                logEvent(LunaEvent(LunaEventType.WEIGHT, weight))
+                logEvent(LunaEvent(LunaEvent.TYPE_WEIGHT, weight))
             else
                 Toast.makeText(this, R.string.toast_integer_error, Toast.LENGTH_SHORT).show()
         }

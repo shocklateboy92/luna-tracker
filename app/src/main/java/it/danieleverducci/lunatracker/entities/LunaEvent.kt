@@ -3,66 +3,68 @@ package it.danieleverducci.lunatracker.entities
 import org.json.JSONObject
 import java.util.Date
 
-class LunaEvent(
-    val type: LunaEventType,
-    val quantity: Int? = null,
-){
-    var time: Long  // In unix time (seconds since 1970)
+/**
+ * Represents a logged event.
+ * It encloses, but doesn't parse entirely, a jsonObject. This was done to
+ * allow expandability and backwards compatibility (if a field is added in a
+ * release, it is simply ignored by previous ones).
+ */
+class LunaEvent {
 
-    init {
-        time = System.currentTimeMillis() / 1000
+    companion object {
+        val TYPE_BABY_BOTTLE = "BABY_BOTTLE"
+        val TYPE_WEIGHT = "WEIGHT"
+        val TYPE_BREASTFEEDING_LEFT_NIPPLE = "BREASTFEEDING_LEFT_NIPPLE"
+        val TYPE_BREASTFEEDING_BOTH_NIPPLE = "BREASTFEEDING_BOTH_NIPPLE"
+        val TYPE_BREASTFEEDING_RIGHT_NIPPLE = "BREASTFEEDING_RIGHT_NIPPLE"
+        val TYPE_DIAPERCHANGE_POO = "DIAPERCHANGE_POO"
+        val TYPE_DIAPERCHANGE_PEE = "DIAPERCHANGE_PEE"
     }
 
-    override fun toString(): String {
-        return "${type.toString()} qty: $quantity time: ${Date(time * 1000)}"
+    private val jo: JSONObject
+
+    var time: Long  // In unix time (seconds since 1970)
+        get() = jo.getLong("time")
+        set(value) {
+            jo.put("time", value)
+        }
+    var type: String
+        get(): String = jo.getString("type")
+        set(value) {
+            jo.put("type", value)
+        }
+    var quantity: Int
+        get() = jo.optInt("quantity")
+        set(value) {
+            if (value > 0)
+                jo.put("quantity", value)
+        }
+
+    constructor(jo: JSONObject) {
+        this.jo = jo
+        // A minimal LunaEvent should have at least time and type
+        if (!jo.has("time") || !jo.has("type"))
+            throw IllegalArgumentException("JSONObject is not a LunaEvent")
+    }
+
+    constructor(type: String) {
+        this.jo = JSONObject()
+        this.time = System.currentTimeMillis() / 1000
+        this.type = type
+    }
+
+    constructor(type: String, quantity: Int) {
+        this.jo = JSONObject()
+        this.time = System.currentTimeMillis() / 1000
+        this.type = type
+        this.quantity = quantity
     }
 
     fun toJson(): JSONObject {
-        val jo = JSONObject()
-        val type = when (type) {
-            LunaEventType.BABY_BOTTLE -> "BABY_BOTTLE"
-            LunaEventType.WEIGHT -> "SCALE"
-            LunaEventType.BREASTFEEDING_LEFT_NIPPLE -> "BREASTFEEDING_LEFT_NIPPLE"
-            LunaEventType.BREASTFEEDING_BOTH_NIPPLE -> "BREASTFEEDING_BOTH_NIPPLE"
-            LunaEventType.BREASTFEEDING_RIGHT_NIPPLE -> "BREASTFEEDING_RIGHT_NIPPLE"
-            LunaEventType.DIAPERCHANGE_POO -> "DIAPERCHANGE_POO"
-            LunaEventType.DIAPERCHANGE_PEE -> "DIAPERCHANGE_PEE"
-            else -> "UNKNOWN"
-        }
-        jo.put("type", type)
-        jo.put("quantity", quantity)
-        jo.put("time", time)
         return jo
     }
 
-    companion object {
-        fun fromJson(j: JSONObject): LunaEvent {
-            val type = when (j.getString("type")) {
-                "BABY_BOTTLE" -> LunaEventType.BABY_BOTTLE
-                "SCALE" -> LunaEventType.WEIGHT
-                "BREASTFEEDING_LEFT_NIPPLE" -> LunaEventType.BREASTFEEDING_LEFT_NIPPLE
-                "BREASTFEEDING_BOTH_NIPPLE" -> LunaEventType.BREASTFEEDING_BOTH_NIPPLE
-                "BREASTFEEDING_RIGHT_NIPPLE" -> LunaEventType.BREASTFEEDING_RIGHT_NIPPLE
-                "DIAPERCHANGE_POO" -> LunaEventType.DIAPERCHANGE_POO
-                "DIAPERCHANGE_PEE" -> LunaEventType.DIAPERCHANGE_PEE
-                else -> LunaEventType.UNKNOWN
-            }
-            val quantity = j.optInt("quantity")
-            val time = j.getLong("time")
-            val evt = LunaEvent(type, quantity)
-            evt.time = time
-            return  evt
-        }
+    override fun toString(): String {
+        return "${type} qty: $quantity time: ${Date(time * 1000)}"
     }
- }
-
-enum class LunaEventType {
-    BABY_BOTTLE,
-    WEIGHT,
-    BREASTFEEDING_LEFT_NIPPLE,
-    BREASTFEEDING_BOTH_NIPPLE,
-    BREASTFEEDING_RIGHT_NIPPLE,
-    DIAPERCHANGE_POO,
-    DIAPERCHANGE_PEE,
-    UNKNOWN
 }

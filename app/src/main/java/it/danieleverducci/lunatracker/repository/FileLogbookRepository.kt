@@ -5,6 +5,7 @@ import it.danieleverducci.lunatracker.entities.Logbook
 import android.util.Log
 import it.danieleverducci.lunatracker.entities.LunaEvent
 import org.json.JSONArray
+import org.json.JSONException
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -31,9 +32,13 @@ class FileLogbookRepository: LogbookRepository {
         val json = FileInputStream(file).bufferedReader().use { it.readText() }
         val ja = JSONArray(json)
         for (i in 0 until ja.length()) {
-            val jo = ja.getJSONObject(i)
-            val evt = LunaEvent.fromJson(jo)
-            logbook.logs.add(evt)
+            try {
+                val evt: LunaEvent = LunaEvent(ja.getJSONObject(i))
+                logbook.logs.add(evt)
+            } catch (e: IllegalArgumentException) {
+                // Mangled JSON?
+                throw JSONException(e.toString())
+            }
         }
         return logbook
     }

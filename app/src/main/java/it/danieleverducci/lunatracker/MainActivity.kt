@@ -30,6 +30,9 @@ import it.danieleverducci.lunatracker.repository.WebDAVLogbookRepository
 import kotlinx.coroutines.Runnable
 import okio.IOException
 import org.json.JSONException
+import utils.DateUtils
+import java.text.DateFormat
+import java.util.Date
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -55,6 +58,11 @@ class MainActivity : AppCompatActivity() {
 
         handler = Handler(mainLooper)
         adapter = LunaEventRecyclerAdapter(this)
+        adapter.onItemClickListener = object: LunaEventRecyclerAdapter.OnItemClickListener{
+            override fun onItemClick(event: LunaEvent) {
+                showEventDetailDialog(event)
+            }
+        }
 
         // Show view
         setContentView(R.layout.activity_main)
@@ -247,6 +255,22 @@ class MainActivity : AppCompatActivity() {
         d.setNegativeButton(R.string.trim_logbook_dialog_button_cancel) { dialogInterface, i ->
             dialogInterface.dismiss()
         }
+        val alertDialog = d.create()
+        alertDialog.show()
+    }
+
+    fun showEventDetailDialog(event: LunaEvent) {
+        val dateFormat = DateFormat.getDateTimeInstance();
+        val d = AlertDialog.Builder(this)
+        d.setTitle(event.getTypeDescription(this))
+        val dialogView = layoutInflater.inflate(R.layout.dialog_event_detail, null)
+        dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_emoji).setText(event.getTypeEmoji(this))
+        dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_description).setText(event.getTypeDescription(this))
+        dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_date).setText(dateFormat.format(Date(event.time * 1000)))
+        dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_quantity).setText(event.quantity.toString())
+        dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_notes).setText(event.notes)
+        d.setView(dialogView)
+        d.setPositiveButton(android.R.string.ok) { dialogInterface, i -> dialogInterface.dismiss() }
         val alertDialog = d.create()
         alertDialog.show()
     }

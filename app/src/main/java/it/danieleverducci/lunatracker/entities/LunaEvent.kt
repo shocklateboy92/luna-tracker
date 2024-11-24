@@ -46,7 +46,7 @@ class LunaEvent {
                 jo.put("quantity", value)
         }
     var notes: String
-        get(): String = jo.getString("notes")
+        get(): String = jo.optString("notes")
         set(value) {
             jo.put("notes", value)
         }

@@ -210,6 +210,8 @@ class MainActivity : AppCompatActivity() {
         d.setView(dialogView)
         val notesET = dialogView.findViewById<EditText>(R.id.notes_edittext)
         val qtyET = dialogView.findViewById<EditText>(R.id.notes_qty_edittext)
+        if (lunaEvent.type == LunaEvent.TYPE_NOTE || lunaEvent.type == LunaEvent.TYPE_CUSTOM)
+            qtyET.visibility = View.GONE
         d.setPositiveButton(android.R.string.ok) { dialogInterface, i ->
             val qtyStr = qtyET.text.toString()
             if (qtyStr.isNotEmpty()) {
@@ -438,6 +440,10 @@ class MainActivity : AppCompatActivity() {
             })
             contentView.findViewById<View>(R.id.button_enema).setOnClickListener({
                 logEvent(LunaEvent(LunaEvent.TYPE_ENEMA))
+                dismiss()
+            })
+            contentView.findViewById<View>(R.id.button_note).setOnClickListener({
+                askNotes(LunaEvent(LunaEvent.TYPE_NOTE))
                 dismiss()
             })
             contentView.findViewById<View>(R.id.button_custom).setOnClickListener({

@@ -12,6 +12,7 @@
 
     <string name="overflow_event_medicine">💊 Medicina</string>
     <string name="overflow_event_enema">🪠 Clistere</string>
+    <string name="overflow_event_note">📝 Nota</string>
     <string name="overflow_event_custom">➕ Aggiungi evento personalizzato</string>
 
     <string name="event_bottle_desc">Biberon</string>
@@ -23,6 +24,7 @@
     <string name="event_diaperchange_pee_desc">Cambio (con pipì)</string>
     <string name="event_medicine_desc">Medicina</string>
     <string name="event_enema_desc">Clistere</string>
+    <string name="event_note_desc">Nota</string>
     <string name="event_unknown_desc"></string>
 
     <string name="toast_event_added">Evento aggiunto</string>

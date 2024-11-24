@@ -19,6 +19,7 @@
     <string name="event_diaperchange_pee_type" translatable="false">🚼 💧</string>
     <string name="event_medicine_type" translatable="false">💊</string>
     <string name="event_enema_type" translatable="false">🪠</string>
+    <string name="event_note_type" translatable="false">📝</string>
     <string name="event_unknown_type" translatable="false">\?</string>
 
     <string name="event_bottle_desc">Baby bottle</string>
@@ -30,10 +31,12 @@
     <string name="event_diaperchange_pee_desc">Diaper chg (pee)</string>
     <string name="event_medicine_desc">Medicine</string>
     <string name="event_enema_desc">Enema</string>
+    <string name="event_note_desc">Note</string>
     <string name="event_unknown_desc"></string>
 
     <string name="overflow_event_medicine">💊 Medicine</string>
     <string name="overflow_event_enema">🪠 Enema</string>
+    <string name="overflow_event_note">📝 Note</string>
     <string name="overflow_event_custom">➕ Add custom event</string>
 
     <string name="toast_event_added">Event logged</string>

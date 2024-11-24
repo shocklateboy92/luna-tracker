@@ -23,6 +23,7 @@ class LunaEvent {
         val TYPE_DIAPERCHANGE_PEE = "DIAPERCHANGE_PEE"
         val TYPE_MEDICINE = "MEDICINE"
         val TYPE_ENEMA = "ENEMA"
+        val TYPE_NOTE = "NOTE"
         val TYPE_CUSTOM = "CUSTOM"
     }
 
@@ -82,6 +83,7 @@ class LunaEvent {
                 TYPE_DIAPERCHANGE_PEE -> R.string.event_diaperchange_pee_type
                 TYPE_MEDICINE -> R.string.event_medicine_type
                 TYPE_ENEMA -> R.string.event_enema_type
+                TYPE_NOTE -> R.string.event_note_type
                 else -> R.string.event_unknown_type
             }
         )
@@ -99,6 +101,7 @@ class LunaEvent {
                 TYPE_DIAPERCHANGE_PEE -> R.string.event_diaperchange_pee_desc
                 TYPE_MEDICINE -> R.string.event_medicine_desc
                 TYPE_ENEMA -> R.string.event_enema_desc
+                TYPE_NOTE -> R.string.event_note_desc
                 else -> R.string.event_unknown_desc
             }
         )

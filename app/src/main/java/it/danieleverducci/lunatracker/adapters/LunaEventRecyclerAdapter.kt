@@ -59,7 +59,12 @@ class LunaEventRecyclerAdapter: RecyclerView.Adapter<LunaEventRecyclerAdapter.Lu
     ) {
         val item = items.get(position)
         holder.type.text = item.getTypeEmoji(context)
-        holder.description.text = item.getTypeDescription(context)
+        holder.description.text = when(item.type) {
+            LunaEvent.TYPE_MEDICINE -> item.notes
+            LunaEvent.TYPE_NOTE -> item.notes
+            LunaEvent.TYPE_CUSTOM -> item.notes
+            else -> item.getTypeDescription(context)
+        }
         holder.time.text = formatTimeAgo(context, item.time)
         val qtyText = if ((item.quantity ?: 0) > 0) {
             item.quantity.toString() + " " + when (item.type) {

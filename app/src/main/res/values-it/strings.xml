@@ -10,17 +10,6 @@
     <string name="log_weight_dialog_title">Pesata</string>
     <string name="log_weight_dialog_description">Inserisci il peso rilevato</string>
 
-    <string name="event_bottle_type">🍼</string>
-    <string name="event_scale_type">⚖️</string>
-    <string name="event_breastfeeding_left_type">🤱 ←</string>
-    <string name="event_breastfeeding_both_type">🤱 ↔</string>
-    <string name="event_breastfeeding_right_type">🤱 →</string>
-    <string name="event_diaperchange_poo_type">🚼 💩</string>
-    <string name="event_diaperchange_pee_type">🚼 💧</string>
-    <string name="event_medicine_type">💊</string>
-    <string name="event_enema_type">🪠</string>
-    <string name="event_unknown_type">-</string>
-
     <string name="overflow_event_medicine">💊 Medicina</string>
     <string name="overflow_event_enema">🪠 Clistere</string>
     <string name="overflow_event_custom">➕ Aggiungi evento personalizzato</string>

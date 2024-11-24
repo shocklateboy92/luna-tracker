@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import it.danieleverducci.lunatracker.entities.LunaEvent
 import it.danieleverducci.lunatracker.R
 import java.util.Date
-import java.util.Locale
 
 class LunaEventRecyclerAdapter: RecyclerView.Adapter<LunaEventRecyclerAdapter.LunaEventVH> {
     private val context: Context
@@ -58,6 +57,9 @@ class LunaEventRecyclerAdapter: RecyclerView.Adapter<LunaEventRecyclerAdapter.Lu
         position: Int
     ) {
         val item = items.get(position)
+        holder.root.setBackgroundResource(
+            if (position % 2 == 0) R.color.list_background_even else R.color.list_background_odd
+        )
         holder.type.text = item.getTypeEmoji(context)
         holder.description.text = when(item.type) {
             LunaEvent.TYPE_MEDICINE -> item.notes
@@ -121,12 +123,14 @@ class LunaEventRecyclerAdapter: RecyclerView.Adapter<LunaEventRecyclerAdapter.Lu
     }
 
     class LunaEventVH: RecyclerView.ViewHolder {
+        val root: View
         val type: TextView
         val description: TextView
         val quantity: TextView
         val time: TextView
 
         constructor(v: View) : super(v) {
+            root = v
             type = v.findViewById<TextView>(R.id.type)
             description = v.findViewById<TextView>(R.id.description)
             quantity = v.findViewById<TextView>(R.id.quantity)

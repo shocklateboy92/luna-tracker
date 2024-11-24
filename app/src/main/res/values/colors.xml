@@ -6,4 +6,6 @@
     <color name="translucent">#c000</color>
     <color name="transparent">#0000</color>
     <color name="grey">#ccc</color>
+    <color name="list_background_odd">#423B25</color>
+    <color name="list_background_even">@color/transparent</color>
 </resources>

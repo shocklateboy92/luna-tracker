@@ -3,6 +3,8 @@
     <stroke
         android:width="2dp"
         android:color="@color/accent" />
+    <solid
+        android:color="@color/cardview_dark_background"/>
     <corners android:radius="15dp" />
     <padding
         android:bottom="5dp"

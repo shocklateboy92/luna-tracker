@@ -4,9 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.NumberPicker
+import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -89,6 +92,10 @@ class MainActivity : AppCompatActivity() {
                 LunaEvent.TYPE_DIAPERCHANGE_PEE
             )
         ) }
+        val moreButton = findViewById<View>(R.id.button_more)
+        moreButton.setOnClickListener {
+            showOverflowPopupWindow(moreButton)
+        }
         findViewById<View>(R.id.button_no_connection_settings).setOnClickListener({
             showSettings()
         })
@@ -177,13 +184,45 @@ class MainActivity : AppCompatActivity() {
         d.setTitle(R.string.log_weight_dialog_title)
         d.setMessage(R.string.log_weight_dialog_description)
         d.setView(dialogView)
-        val weightET = dialogView.findViewById<TextView>(R.id.dialog_number_edittext)
+        val weightET = dialogView.findViewById<EditText>(R.id.dialog_number_edittext)
         d.setPositiveButton(android.R.string.ok) { dialogInterface, i ->
             val weight = weightET.text.toString().toIntOrNull()
             if (weight != null)
                 logEvent(LunaEvent(LunaEvent.TYPE_WEIGHT, weight))
             else
                 Toast.makeText(this, R.string.toast_integer_error, Toast.LENGTH_SHORT).show()
+        }
+        d.setNegativeButton(android.R.string.cancel) { dialogInterface, i -> dialogInterface.dismiss() }
+        val alertDialog = d.create()
+        alertDialog.show()
+    }
+
+    fun askNotes(lunaEvent: LunaEvent) {
+        val d = AlertDialog.Builder(this)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_notes, null)
+        d.setTitle(lunaEvent.getTypeDescription(this))
+        d.setMessage(
+            when (lunaEvent.type){
+                LunaEvent.TYPE_MEDICINE -> R.string.log_medicine_dialog_description
+                else -> R.string.log_notes_dialog_description
+            }
+        )
+        d.setView(dialogView)
+        val notesET = dialogView.findViewById<EditText>(R.id.notes_edittext)
+        val qtyET = dialogView.findViewById<EditText>(R.id.notes_qty_edittext)
+        d.setPositiveButton(android.R.string.ok) { dialogInterface, i ->
+            val qtyStr = qtyET.text.toString()
+            if (qtyStr.isNotEmpty()) {
+                val qty = qtyStr.toIntOrNull()
+                if (qty == null) {
+                    Toast.makeText(this, R.string.toast_integer_error, Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+                lunaEvent.quantity = qty
+            }
+            val notes = notesET.text.toString()
+            lunaEvent.notes = notes
+            logEvent(lunaEvent)
         }
         d.setNegativeButton(android.R.string.cancel) { dialogInterface, i -> dialogInterface.dismiss() }
         val alertDialog = d.create()
@@ -384,4 +423,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun showOverflowPopupWindow(anchor: View) {
+        PopupWindow(anchor.context).apply {
+            isOutsideTouchable = true
+            val inflater = LayoutInflater.from(anchor.context)
+            contentView = inflater.inflate(R.layout.more_events_popup, null)
+            contentView.findViewById<View>(R.id.button_medicine).setOnClickListener({
+                askNotes(LunaEvent(LunaEvent.TYPE_MEDICINE))
+                dismiss()
+            })
+            contentView.findViewById<View>(R.id.button_enema).setOnClickListener({
+                logEvent(LunaEvent(LunaEvent.TYPE_ENEMA))
+                dismiss()
+            })
+            contentView.findViewById<View>(R.id.button_custom).setOnClickListener({
+                Toast.makeText(anchor.context, "TODO: Implement custom events", Toast.LENGTH_SHORT).show()
+                dismiss()
+            })
+        }.also { popupWindow ->
+            popupWindow.showAsDropDown(anchor)
+        }
+    }
 }

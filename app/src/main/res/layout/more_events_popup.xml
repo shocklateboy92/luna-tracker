@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp"
+    android:background="@color/transparent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/button_medicine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="20dp"
+                android:background="@drawable/button_background"
+                android:text="@string/overflow_event_medicine"/>
+
+            <TextView
+                android:id="@+id/button_enema"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:padding="20dp"
+                android:background="@drawable/button_background"
+                android:text="@string/overflow_event_enema"/>
+
+
+            <LinearLayout
+                android:id="@+id/overflow_event_custom_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/button_custom"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:padding="20dp"
+                android:background="@drawable/button_background"
+                android:text="@string/overflow_event_custom"/>
+
+    </LinearLayout>
+
+</ScrollView>

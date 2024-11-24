@@ -1,5 +1,7 @@
 package it.danieleverducci.lunatracker.entities
 
+import android.content.Context
+import it.danieleverducci.lunatracker.R
 import org.json.JSONObject
 import java.util.Date
 
@@ -19,6 +21,9 @@ class LunaEvent {
         val TYPE_BREASTFEEDING_RIGHT_NIPPLE = "BREASTFEEDING_RIGHT_NIPPLE"
         val TYPE_DIAPERCHANGE_POO = "DIAPERCHANGE_POO"
         val TYPE_DIAPERCHANGE_PEE = "DIAPERCHANGE_PEE"
+        val TYPE_MEDICINE = "MEDICINE"
+        val TYPE_ENEMA = "ENEMA"
+        val TYPE_CUSTOM = "CUSTOM"
     }
 
     private val jo: JSONObject
@@ -39,6 +44,11 @@ class LunaEvent {
             if (value > 0)
                 jo.put("quantity", value)
         }
+    var notes: String
+        get(): String = jo.getString("notes")
+        set(value) {
+            jo.put("notes", value)
+        }
 
     constructor(jo: JSONObject) {
         this.jo = jo
@@ -58,6 +68,40 @@ class LunaEvent {
         this.time = System.currentTimeMillis() / 1000
         this.type = type
         this.quantity = quantity
+    }
+
+    fun getTypeEmoji(context: Context): String {
+        return context.getString(
+            when (type) {
+                TYPE_BABY_BOTTLE -> R.string.event_bottle_type
+                TYPE_WEIGHT -> R.string.event_scale_type
+                TYPE_BREASTFEEDING_LEFT_NIPPLE -> R.string.event_breastfeeding_left_type
+                TYPE_BREASTFEEDING_BOTH_NIPPLE -> R.string.event_breastfeeding_both_type
+                TYPE_BREASTFEEDING_RIGHT_NIPPLE -> R.string.event_breastfeeding_right_type
+                TYPE_DIAPERCHANGE_POO -> R.string.event_diaperchange_poo_type
+                TYPE_DIAPERCHANGE_PEE -> R.string.event_diaperchange_pee_type
+                TYPE_MEDICINE -> R.string.event_medicine_type
+                TYPE_ENEMA -> R.string.event_enema_type
+                else -> R.string.event_unknown_type
+            }
+        )
+    }
+
+    fun getTypeDescription(context: Context): String {
+        return context.getString(
+            when (type) {
+                TYPE_BABY_BOTTLE -> R.string.event_bottle_desc
+                TYPE_WEIGHT -> R.string.event_scale_desc
+                TYPE_BREASTFEEDING_LEFT_NIPPLE -> R.string.event_breastfeeding_left_desc
+                TYPE_BREASTFEEDING_BOTH_NIPPLE -> R.string.event_breastfeeding_both_desc
+                TYPE_BREASTFEEDING_RIGHT_NIPPLE -> R.string.event_breastfeeding_right_desc
+                TYPE_DIAPERCHANGE_POO -> R.string.event_diaperchange_poo_desc
+                TYPE_DIAPERCHANGE_PEE -> R.string.event_diaperchange_pee_desc
+                TYPE_MEDICINE -> R.string.event_medicine_desc
+                TYPE_ENEMA -> R.string.event_enema_desc
+                else -> R.string.event_unknown_desc
+            }
+        )
     }
 
     fun toJson(): JSONObject {

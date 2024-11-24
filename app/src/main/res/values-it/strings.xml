@@ -17,7 +17,13 @@
     <string name="event_breastfeeding_right_type">🤱 →</string>
     <string name="event_diaperchange_poo_type">🚼 💩</string>
     <string name="event_diaperchange_pee_type">🚼 💧</string>
+    <string name="event_medicine_type">💊</string>
+    <string name="event_enema_type">🪠</string>
     <string name="event_unknown_type">-</string>
+
+    <string name="overflow_event_medicine">💊 Medicina</string>
+    <string name="overflow_event_enema">🪠 Clistere</string>
+    <string name="overflow_event_custom">➕ Aggiungi evento personalizzato</string>
 
     <string name="event_bottle_desc">Biberon</string>
     <string name="event_scale_desc">Pesata</string>
@@ -26,6 +32,8 @@
     <string name="event_breastfeeding_right_desc">Allatt. al seno (dx)</string>
     <string name="event_diaperchange_poo_desc">Cambio (con cacca)</string>
     <string name="event_diaperchange_pee_desc">Cambio (con pipì)</string>
+    <string name="event_medicine_desc">Medicina</string>
+    <string name="event_enema_desc">Clistere</string>
     <string name="event_unknown_desc"></string>
 
     <string name="toast_event_added">Evento aggiunto</string>
@@ -67,5 +75,9 @@
     <string name="trim_logbook_dialog_message_dav">Il file del tuo diario sta crescendo molto. Ti suggeriamo di cancellare gli eventi più vecchi per evitare problemi di memoria. Se vuoi conservare tutto lo storico, fai un backup del file "lunatracker_logbook.json" sul tuo server WebDAV o rinominalo per mantenerlo così e cominciare un nuovo diario.</string>
     <string name="trim_logbook_dialog_button_ok">Cancella i più vecchi</string>
     <string name="trim_logbook_dialog_button_cancel">Ricordamelo dopo</string>
+
+    <string name="log_notes_dialog_description">Note:</string>
+    <string name="log_medicine_dialog_description">Nome della medicina, quantità, formato, note…:</string>
+    <string name="log_notes_dialog_qty_hint">Quantità (numero intero), o lascia vuoto</string>
 
 </resources>

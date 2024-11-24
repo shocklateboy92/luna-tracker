@@ -17,7 +17,9 @@
     <string name="event_breastfeeding_right_type">🤱 →</string>
     <string name="event_diaperchange_poo_type">🚼 💩</string>
     <string name="event_diaperchange_pee_type">🚼 💧</string>
-    <string name="event_unknown_type">-</string>
+    <string name="event_medicine_type">💊</string>
+    <string name="event_enema_type">🪠</string>
+    <string name="event_unknown_type">\?</string>
 
     <string name="event_bottle_desc">Baby bottle</string>
     <string name="event_scale_desc">Weight</string>
@@ -26,7 +28,13 @@
     <string name="event_breastfeeding_right_desc">Breastfeeding (right)</string>
     <string name="event_diaperchange_poo_desc">Diaper chg (poo)</string>
     <string name="event_diaperchange_pee_desc">Diaper chg (pee)</string>
+    <string name="event_medicine_desc">Medicine</string>
+    <string name="event_enema_desc">Enema</string>
     <string name="event_unknown_desc"></string>
+
+    <string name="overflow_event_medicine">💊 Medicine</string>
+    <string name="overflow_event_enema">🪠 Enema</string>
+    <string name="overflow_event_custom">➕ Add custom event</string>
 
     <string name="toast_event_added">Event logged</string>
     <string name="toast_logbook_saved">Logbook saved</string>
@@ -49,7 +57,7 @@
     <string name="settings_storage_local">On device</string>
     <string name="settings_storage_local_desc">Most privacy-friendly solution: data doesn\'t leave your device</string>
     <string name="settings_storage_dav">On a WebDAV server</string>
-    <string name="settings_storage_dav_desc">You can use any WebDAV service (i.e. Nextcloud, Owncloud, Dropbox, Box...) to save the data. In this way you can syncronize it between more devices, i.e. the dad\'s, the mom\'s, the grandma\'s... You will need the WebDAV url, you can find it in your provider\'s documentation (i.e. in Nextcloud web is in the Files app settings)</string>
+    <string name="settings_storage_dav_desc">You can use any WebDAV service (i.e. Nextcloud, Owncloud, Dropbox, Box…) to save the data. In this way you can syncronize it between more devices, i.e. the dad\'s, the mom\'s, the grandma\'s… You will need the WebDAV url, you can find it in your provider\'s documentation (i.e. in Nextcloud web is in the Files app settings)</string>
     <string name="settings_storage_dav_url">WebDAV url</string>
     <string name="settings_storage_dav_url_hint">https://</string>
     <string name="settings_storage_dav_user">Username</string>
@@ -67,5 +75,9 @@
     <string name="trim_logbook_dialog_message_dav">Your logbook file is growing a lot. We suggest trimming the oldest events to avoid crashes. If you want to preserve all the events, please backup the "lunatracker_logbook.json" file on the WebDAV server or rename it to start a new logbook keeping the old one.</string>
     <string name="trim_logbook_dialog_button_ok">Trim it now</string>
     <string name="trim_logbook_dialog_button_cancel">Remind me later</string>
+
+    <string name="log_notes_dialog_description">Notes:</string>
+    <string name="log_medicine_dialog_description">Medicine name, quantity, type, notes…:</string>
+    <string name="log_notes_dialog_qty_hint">Integer quantity, or leave blank</string>
 
 </resources>

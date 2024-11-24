@@ -33,30 +33,8 @@ class LunaEventRecyclerAdapter: RecyclerView.Adapter<LunaEventRecyclerAdapter.Lu
         position: Int
     ) {
         val item = items.get(position)
-        holder.type.text = context.getString(
-            when (item.type) {
-                LunaEvent.TYPE_BABY_BOTTLE -> R.string.event_bottle_type
-                LunaEvent.TYPE_WEIGHT -> R.string.event_scale_type
-                LunaEvent.TYPE_BREASTFEEDING_LEFT_NIPPLE -> R.string.event_breastfeeding_left_type
-                LunaEvent.TYPE_BREASTFEEDING_BOTH_NIPPLE -> R.string.event_breastfeeding_both_type
-                LunaEvent.TYPE_BREASTFEEDING_RIGHT_NIPPLE -> R.string.event_breastfeeding_right_type
-                LunaEvent.TYPE_DIAPERCHANGE_POO -> R.string.event_diaperchange_poo_type
-                LunaEvent.TYPE_DIAPERCHANGE_PEE -> R.string.event_diaperchange_pee_type
-                else -> R.string.event_unknown_type
-            }
-        )
-        holder.description.text = context.getString(
-            when (item.type) {
-                LunaEvent.TYPE_BABY_BOTTLE -> R.string.event_bottle_desc
-                LunaEvent.TYPE_WEIGHT -> R.string.event_scale_desc
-                LunaEvent.TYPE_BREASTFEEDING_LEFT_NIPPLE -> R.string.event_breastfeeding_left_desc
-                LunaEvent.TYPE_BREASTFEEDING_BOTH_NIPPLE -> R.string.event_breastfeeding_both_desc
-                LunaEvent.TYPE_BREASTFEEDING_RIGHT_NIPPLE -> R.string.event_breastfeeding_right_desc
-                LunaEvent.TYPE_DIAPERCHANGE_POO -> R.string.event_diaperchange_poo_desc
-                LunaEvent.TYPE_DIAPERCHANGE_PEE -> R.string.event_diaperchange_pee_desc
-                else -> R.string.event_unknown_desc
-            }
-        )
+        holder.type.text = item.getTypeEmoji(context)
+        holder.description.text = item.getTypeDescription(context)
         holder.quantity.text = if ((item.quantity ?: 0) > 0) item.quantity.toString() else ""
         holder.time.text = formatTimeAgo(context, item.time)
     }

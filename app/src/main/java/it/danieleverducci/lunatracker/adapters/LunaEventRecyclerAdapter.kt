@@ -1,8 +1,6 @@
 package it.danieleverducci.lunatracker.adapters
 
 import android.content.Context
-import android.icu.util.LocaleData
-import android.icu.util.ULocale
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,36 +9,17 @@ import androidx.recyclerview.widget.RecyclerView
 import it.danieleverducci.lunatracker.entities.LunaEvent
 import it.danieleverducci.lunatracker.R
 import utils.DateUtils
+import utils.NumericUtils
 
 class LunaEventRecyclerAdapter: RecyclerView.Adapter<LunaEventRecyclerAdapter.LunaEventVH> {
     private val context: Context
     val items = ArrayList<LunaEvent>()
-    val measurement_unit_liquid_base: String
-    val measurement_unit_weight_base: String
-    val measurement_unit_weight_tiny: String
+    val numericUtils: NumericUtils
     var onItemClickListener: OnItemClickListener? = null
 
     constructor(context: Context) {
         this.context = context
-        val measurementSystem = LocaleData.getMeasurementSystem(ULocale.getDefault())
-        this.measurement_unit_liquid_base = context.getString(
-            if (measurementSystem == LocaleData. MeasurementSystem.SI)
-                R.string.measurement_unit_liquid_base_metric
-            else
-                R.string.measurement_unit_liquid_base_imperial
-        )
-        this.measurement_unit_weight_base = context.getString(
-            if (measurementSystem == LocaleData. MeasurementSystem.SI)
-                R.string.measurement_unit_weight_base_metric
-            else
-                R.string.measurement_unit_weight_base_imperial
-        )
-        this.measurement_unit_weight_tiny = context.getString(
-            if (measurementSystem == LocaleData. MeasurementSystem.SI)
-                R.string.measurement_unit_weight_tiny_metric
-            else
-                R.string.measurement_unit_weight_tiny_imperial
-        )
+        this.numericUtils = NumericUtils(context)
     }
 
     override fun onCreateViewHolder(
@@ -70,17 +49,7 @@ class LunaEventRecyclerAdapter: RecyclerView.Adapter<LunaEventRecyclerAdapter.Lu
             else -> item.getTypeDescription(context)
         }
         holder.time.text = DateUtils.formatTimeAgo(context, item.time)
-        val qtyText = if ((item.quantity ?: 0) > 0) {
-            item.quantity.toString() + " " + when (item.type) {
-                LunaEvent.TYPE_BABY_BOTTLE -> measurement_unit_liquid_base
-                LunaEvent.TYPE_WEIGHT -> measurement_unit_weight_base
-                LunaEvent.TYPE_MEDICINE -> measurement_unit_weight_tiny
-                else -> ""
-            }
-        } else {
-            ""
-        }
-        holder.quantity.text = qtyText
+        holder.quantity.text = numericUtils.formatEventQuantity(item)
         // Listeners
         if (onItemClickListener != null) {
             holder.root.setOnClickListener({

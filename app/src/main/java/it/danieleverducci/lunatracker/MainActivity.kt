@@ -31,6 +31,7 @@ import kotlinx.coroutines.Runnable
 import okio.IOException
 import org.json.JSONException
 import utils.DateUtils
+import utils.NumericUtils
 import java.text.DateFormat
 import java.util.Date
 
@@ -262,12 +263,14 @@ class MainActivity : AppCompatActivity() {
     fun showEventDetailDialog(event: LunaEvent) {
         val dateFormat = DateFormat.getDateTimeInstance();
         val d = AlertDialog.Builder(this)
-        d.setTitle(event.getTypeDescription(this))
+        d.setTitle(R.string.dialog_event_detail_title)
         val dialogView = layoutInflater.inflate(R.layout.dialog_event_detail, null)
         dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_emoji).setText(event.getTypeEmoji(this))
         dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_description).setText(event.getTypeDescription(this))
         dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_date).setText(dateFormat.format(Date(event.time * 1000)))
-        dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_quantity).setText(event.quantity.toString())
+        dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_quantity).setText(
+            NumericUtils(this).formatEventQuantity(event)
+        )
         dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_notes).setText(event.notes)
         d.setView(dialogView)
         d.setPositiveButton(android.R.string.ok) { dialogInterface, i -> dialogInterface.dismiss() }

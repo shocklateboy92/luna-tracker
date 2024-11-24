@@ -90,4 +90,6 @@
     <string name="measurement_unit_weight_base_imperial" translatable="false">oz</string>
     <string name="measurement_unit_weight_tiny_imperial" translatable="false">gr</string>
 
+    <string name="dialog_event_detail_title">Event detail</string>
+
 </resources>

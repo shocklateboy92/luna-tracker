@@ -48,7 +48,7 @@
     <string name="settings_storage_local">Sul dispositivo</string>
     <string name="settings_storage_local_desc">La soluzione più privacy-friendly: i dati non escono mai dal tuo dispositivo</string>
     <string name="settings_storage_dav">Su un server WebDAV</string>
-    <string name="settings_storage_dav_desc">Puoi usare un qualunque servizio che supporti WebDAV (come ad esempio Nextcloud, Owncloud, Dropbox, Box...) per salvare i dati. In questo modo puoi sincronizzarli tra più dispositivi, ad esempio quello del papà, della mamma, dei nonni... Ti servirà l\'url WebDAV, che trovi nella documentazione del tuo provider (ad es. in Nextcloud è nelle impostazioni di Files)</string>
+    <string name="settings_storage_dav_desc">Puoi usare un qualunque servizio che supporti WebDAV (come ad esempio Nextcloud, Owncloud, Dropbox, Box…) per salvare i dati. In questo modo puoi sincronizzarli tra più dispositivi, ad esempio quello del papà, della mamma, dei nonni… Ti servirà l\'url WebDAV, che trovi nella documentazione del tuo provider (ad es. in Nextcloud è nelle impostazioni di Files)</string>
     <string name="settings_storage_dav_url">Url WebDAV</string>
     <string name="settings_storage_dav_url_hint">https://</string>
     <string name="settings_storage_dav_user">Username</string>
@@ -70,5 +70,7 @@
     <string name="log_notes_dialog_description">Note:</string>
     <string name="log_medicine_dialog_description">Nome della medicina, quantità, formato, note…:</string>
     <string name="log_notes_dialog_qty_hint">Quantità (numero intero), o lascia vuoto</string>
+
+    <string name="dialog_event_detail_title">Dettaglio evento</string>
 
 </resources>

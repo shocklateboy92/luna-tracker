@@ -34,6 +34,7 @@ import org.json.JSONException
 class MainActivity : AppCompatActivity() {
     companion object {
         val TAG = "MainActivity"
+        val UPDATE_EVERY_SECS: Long = 30
     }
 
     lateinit var logbook: Logbook
@@ -145,7 +146,6 @@ class MainActivity : AppCompatActivity() {
 
         // Reload data
         loadLogbook()
-        handler.postDelayed(updateListRunnable, 1000*30)
     }
 
     override fun onStop() {
@@ -252,6 +252,10 @@ class MainActivity : AppCompatActivity() {
     fun loadLogbook() {
         if (savingEvent)
             return
+
+        // Reset time counter
+        handler.removeCallbacks(updateListRunnable)
+        handler.postDelayed(updateListRunnable, UPDATE_EVERY_SECS*1000)
 
         // Load data
         setLoading(true)

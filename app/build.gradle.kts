@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "it.danieleverducci.lunatracker"
-        minSdk = 29
+        minSdk = 21
         targetSdk = 34
         versionCode = 1
         versionName = "0.2"

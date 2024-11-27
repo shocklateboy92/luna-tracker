@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.LunaTracker" parent="Theme.AppCompat.NoActionBar" />
+    <style name="Theme.LunaTracker" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorAccent">@color/accent</item>
+    </style>
+
+    <style name="OverflowMenuText">
+        <item name="android:textSize">20sp</item>
+    </style>
 </resources>

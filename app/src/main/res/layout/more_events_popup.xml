@@ -16,6 +16,7 @@
                 android:layout_height="match_parent"
                 android:padding="20dp"
                 android:background="@drawable/button_background"
+                style="@style/OverflowMenuText"
                 android:text="@string/overflow_event_medicine"/>
 
             <TextView
@@ -25,6 +26,7 @@
                 android:layout_marginTop="10dp"
                 android:padding="20dp"
                 android:background="@drawable/button_background"
+                style="@style/OverflowMenuText"
                 android:text="@string/overflow_event_enema"/>
 
             <TextView
@@ -34,6 +36,7 @@
                 android:layout_marginTop="10dp"
                 android:padding="20dp"
                 android:background="@drawable/button_background"
+                style="@style/OverflowMenuText"
                 android:text="@string/overflow_event_note"/>
 
 
@@ -51,6 +54,7 @@
                 android:layout_marginTop="10dp"
                 android:padding="20dp"
                 android:background="@drawable/button_background"
+                style="@style/OverflowMenuText"
                 android:text="@string/overflow_event_custom"/>
 
     </LinearLayout>

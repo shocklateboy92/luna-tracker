@@ -13,7 +13,7 @@
     <string name="overflow_event_medicine">💊 Medicina</string>
     <string name="overflow_event_enema">🪠 Clistere</string>
     <string name="overflow_event_note">📝 Nota</string>
-    <string name="overflow_event_custom">➕ Aggiungi evento personalizzato</string>
+    <string name="overflow_event_custom">➕ Personalizzato</string>
 
     <string name="event_bottle_desc">Biberon</string>
     <string name="event_scale_desc">Pesata</string>
@@ -69,7 +69,8 @@
 
     <string name="log_notes_dialog_description">Note:</string>
     <string name="log_medicine_dialog_description">Nome della medicina, quantità, formato, note…:</string>
-    <string name="log_notes_dialog_qty_hint">Quantità (numero intero), o lascia vuoto</string>
+    <string name="log_notes_dialog_qty_hint">Quantità, o vuoto</string>
+    <string name="log_notes_dialog_note_hint">Inserisci le note</string>
 
     <string name="dialog_event_detail_title">Dettaglio evento</string>
 

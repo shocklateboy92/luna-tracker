@@ -37,7 +37,7 @@
     <string name="overflow_event_medicine">💊 Medicine</string>
     <string name="overflow_event_enema">🪠 Enema</string>
     <string name="overflow_event_note">📝 Note</string>
-    <string name="overflow_event_custom">➕ Add custom event</string>
+    <string name="overflow_event_custom">➕ Add custom</string>
 
     <string name="toast_event_added">Event logged</string>
     <string name="toast_logbook_saved">Logbook saved</string>
@@ -81,7 +81,8 @@
 
     <string name="log_notes_dialog_description">Notes:</string>
     <string name="log_medicine_dialog_description">Medicine name, quantity, type, notes…:</string>
-    <string name="log_notes_dialog_qty_hint">Integer quantity, or leave blank</string>
+    <string name="log_notes_dialog_qty_hint">Quantity (or empty)</string>
+    <string name="log_notes_dialog_note_hint">Write some notes</string>
 
     <string name="measurement_unit_liquid_base_metric" translatable="false">ml</string>
     <string name="measurement_unit_weight_base_metric" translatable="false">g</string>

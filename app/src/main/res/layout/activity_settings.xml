@@ -68,7 +68,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
                 android:hint="@string/settings_storage_dav_url_hint"
-                android:inputType="textUri"/>
+                android:inputType="textUri"
+                android:background="@drawable/textview_background"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -83,7 +84,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
-                android:inputType="textEmailAddress"/>
+                android:inputType="textEmailAddress"
+                android:background="@drawable/textview_background"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -98,7 +100,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
-                android:inputType="textPassword"/>
+                android:inputType="textPassword"
+                android:background="@drawable/textview_background"/>
 
             <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/progress_indicator"

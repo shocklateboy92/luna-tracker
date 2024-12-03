@@ -122,6 +122,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_marginRight="20dp"
+                    android:background="@drawable/button_background"
+                    android:textColor="@color/accent"
                     android:text="@android:string/cancel"/>
 
                 <Button
@@ -130,6 +133,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textColor="@color/accent"
+                    android:background="@drawable/button_background"
                     android:text="@android:string/ok"/>
 
             </LinearLayout>

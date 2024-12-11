@@ -8,4 +8,6 @@
     <color name="grey">#ccc</color>
     <color name="list_background_odd">#423B25</color>
     <color name="list_background_even">@color/transparent</color>
+    <color name="danger">#f00</color>
+    <color name="textColor">@color/grey</color>
 </resources>

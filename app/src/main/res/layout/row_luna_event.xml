@@ -24,6 +24,7 @@
         android:layout_weight="2"
         android:ellipsize="end"
         android:maxLines="2"
+        android:textColor="@color/accent"
         android:text="Description"/>
 
     <TextView
@@ -34,8 +35,6 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:gravity="center_horizontal"
-        android:lines="1"
-        android:maxLines="1"
         android:text="Qty"/>
 
     <TextView

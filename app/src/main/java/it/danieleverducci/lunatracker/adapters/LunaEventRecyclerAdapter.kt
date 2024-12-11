@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import it.danieleverducci.lunatracker.entities.LunaEvent
 import it.danieleverducci.lunatracker.R
@@ -16,18 +17,26 @@ class LunaEventRecyclerAdapter: RecyclerView.Adapter<LunaEventRecyclerAdapter.Lu
     val items = ArrayList<LunaEvent>()
     val numericUtils: NumericUtils
     var onItemClickListener: OnItemClickListener? = null
+    val layoutRes: Int
 
     constructor(context: Context) {
         this.context = context
         this.numericUtils = NumericUtils(context)
+
+        val fontScale = context.resources.configuration.fontScale
+        val screenSize = context.resources.configuration.screenWidthDp
+        this.layoutRes =
+            if(fontScale > 1.2 || screenSize < 320 || (fontScale > 1 && screenSize < 400))
+                R.layout.row_luna_event_vertical
+            else
+                R.layout.row_luna_event
     }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): LunaEventVH {
-
-        val view = LayoutInflater.from(context).inflate(R.layout.row_luna_event, parent, false)
+        val view = LayoutInflater.from(context).inflate(layoutRes, parent, false)
         return LunaEventVH(view)
     }
 
@@ -40,6 +49,7 @@ class LunaEventRecyclerAdapter: RecyclerView.Adapter<LunaEventRecyclerAdapter.Lu
         holder.root.setBackgroundResource(
             if (position % 2 == 0) R.color.list_background_even else R.color.list_background_odd
         )
+        holder.quantity.setTextColor(ContextCompat.getColor(context, R.color.textColor))
         // Contents
         holder.type.text = item.getTypeEmoji(context)
         holder.description.text = when(item.type) {
@@ -49,7 +59,23 @@ class LunaEventRecyclerAdapter: RecyclerView.Adapter<LunaEventRecyclerAdapter.Lu
             else -> item.getTypeDescription(context)
         }
         holder.time.text = DateUtils.formatTimeAgo(context, item.time)
-        holder.quantity.text = numericUtils.formatEventQuantity(item)
+        var quantityText = numericUtils.formatEventQuantity(item)
+
+        // if the event is weight, show difference with the last one
+        if (item.type == LunaEvent.TYPE_WEIGHT) {
+            val lastWeight = getPreviousWeightEvent(position)
+            if (lastWeight != null) {
+                val differenceInWeight = item.quantity - lastWeight.quantity
+                val sign = if (differenceInWeight > 0) "+" else ""
+                quantityText += "\n($sign$differenceInWeight)"
+                if (differenceInWeight < 0) {
+                    holder.quantity.setTextColor(ContextCompat.getColor(context, R.color.danger))
+                }
+            }
+        }
+
+        holder.quantity.text = quantityText
+
         // Listeners
         if (onItemClickListener != null) {
             holder.root.setOnClickListener({
@@ -60,6 +86,18 @@ class LunaEventRecyclerAdapter: RecyclerView.Adapter<LunaEventRecyclerAdapter.Lu
 
     override fun getItemCount(): Int {
         return items.size
+    }
+
+    private fun getPreviousWeightEvent(startFromPosition: Int): LunaEvent? {
+        if (startFromPosition == items.size - 1)
+            return null
+        for (pos in startFromPosition + 1 until items.size) {
+            val item = items.get(pos)
+            if (item.type != LunaEvent.TYPE_WEIGHT)
+                continue
+            return item
+        }
+        return null
     }
 
     class LunaEventVH: RecyclerView.ViewHolder {

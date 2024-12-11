@@ -3,6 +3,7 @@
 
     <style name="Theme.LunaTracker" parent="Theme.AppCompat.NoActionBar">
         <item name="colorAccent">@color/accent</item>
+        <item name="android:textColor">@color/textColor</item>
     </style>
 
     <style name="OverflowMenuText">

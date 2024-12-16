@@ -1,5 +1,3 @@
-LunaTracker is a newborn baby tracking app.
-
 Parenting can be tough. You get home from the hospital, exhausted, with this little fragile unknown thingy that has no user manual and a single way to let you know something's not ok: crying.
 You have to react fast, event if it's 4 AM and you have no idea why is crying.
 

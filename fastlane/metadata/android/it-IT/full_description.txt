@@ -1,5 +1,3 @@
-LunaTracker è un'app di tracciamento neonatale
-
 Essere genitori può essere dura. Arrivate a casa dall'ospedale, esausti, con questo cosino fragile e sconosciuto che non ha un manuale d'uso, e ha un solo modo per segnalare che c'è qualcosa che non va: piangere.
 Dovete essere sempre pronti a reagire, anche se sono le 4 di mattina e non avete idea del perché stia piangendo.
 

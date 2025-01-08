@@ -30,7 +30,6 @@ import it.danieleverducci.lunatracker.repository.WebDAVLogbookRepository
 import kotlinx.coroutines.Runnable
 import okio.IOException
 import org.json.JSONException
-import utils.DateUtils
 import utils.NumericUtils
 import java.text.DateFormat
 import java.util.Date
@@ -39,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         val TAG = "MainActivity"
         val UPDATE_EVERY_SECS: Long = 30
+        val DEBUG_CHECK_LOGBOOK_CONSISTENCY = false
     }
 
     lateinit var logbook: Logbook
@@ -295,6 +295,15 @@ class MainActivity : AppCompatActivity() {
                     findViewById<View>(R.id.no_connection_screen).visibility = View.GONE
                     logbook = lb
                     showLogbook()
+
+                    if (DEBUG_CHECK_LOGBOOK_CONSISTENCY) {
+                        for (e in logbook.logs) {
+                            val em = e.getTypeEmoji(this@MainActivity)
+                            if (em == getString(R.string.event_unknown_type)) {
+                                Log.e(TAG, "UNKNOWN: ${e.type}")
+                            }
+                        }
+                    }
                 })
             }
 

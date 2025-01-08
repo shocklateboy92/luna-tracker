@@ -53,6 +53,7 @@ class MainActivity : AppCompatActivity() {
         handler.postDelayed(updateListRunnable, 1000*60)
     }
     var logbookRepo: LogbookRepository? = null
+    var showingOverflowPopupWindow = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -466,6 +467,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showOverflowPopupWindow(anchor: View) {
+        if (showingOverflowPopupWindow)
+            return
+
         PopupWindow(anchor.context).apply {
             isOutsideTouchable = true
             val inflater = LayoutInflater.from(anchor.context)
@@ -487,7 +491,13 @@ class MainActivity : AppCompatActivity() {
                 dismiss()
             })
         }.also { popupWindow ->
+            popupWindow.setOnDismissListener({
+                Handler(mainLooper).postDelayed({
+                    showingOverflowPopupWindow = false
+                }, 500)
+            })
             popupWindow.showAsDropDown(anchor)
+            showingOverflowPopupWindow = true
         }
     }
 }

@@ -10,10 +10,14 @@
     <string name="log_weight_dialog_title">Pesata</string>
     <string name="log_weight_dialog_description">Inserisci il peso rilevato</string>
 
+    <string name="log_temperature_dialog_title">Temperatura</string>
+    <string name="log_temperature_dialog_description">Inserisci la temperatura</string>
+
     <string name="overflow_event_medicine">💊 Medicina</string>
     <string name="overflow_event_enema">🪠 Clistere</string>
     <string name="overflow_event_note">📝 Nota</string>
-    <string name="overflow_event_custom">➕ Personalizzato</string>
+    <string name="overflow_event_temperature">🌡️ Temperatura</string>
+    <string name="overflow_event_colic">💨 Colichette</string>
 
     <string name="event_bottle_desc">Biberon</string>
     <string name="event_scale_desc">Pesata</string>
@@ -25,6 +29,8 @@
     <string name="event_medicine_desc">Medicina</string>
     <string name="event_enema_desc">Clistere</string>
     <string name="event_note_desc">Nota</string>
+    <string name="event_temperature_desc">Temperatura</string>
+    <string name="event_colic_desc">Colichette</string>
     <string name="event_unknown_desc"></string>
 
     <string name="toast_event_added">Evento aggiunto</string>

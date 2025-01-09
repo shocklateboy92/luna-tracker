@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="human_body_temp_min_imperial">91</integer>
+    <integer name="human_body_temp_min_metric">33</integer>
+    <integer name="human_body_temp_max_imperial">109</integer>
+    <integer name="human_body_temp_max_metric">43</integer>
+    <integer name="human_body_temp_normal_imperial">98</integer>
+    <integer name="human_body_temp_normal_metric">37</integer>
+</resources>

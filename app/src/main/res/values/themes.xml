@@ -9,4 +9,9 @@
     <style name="OverflowMenuText">
         <item name="android:textSize">20sp</item>
     </style>
+
+    <style name="LTSlider" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/accent</item>
+    </style>
+
 </resources>

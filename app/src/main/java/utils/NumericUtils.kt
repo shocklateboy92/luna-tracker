@@ -12,6 +12,7 @@ class NumericUtils (val context: Context) {
     val measurement_unit_liquid_base: String
     val measurement_unit_weight_base: String
     val measurement_unit_weight_tiny: String
+    val measurement_unit_temperature_base: String
 
     init {
         this.numberFormat = NumberFormat.getInstance()
@@ -34,18 +35,58 @@ class NumericUtils (val context: Context) {
             else
                 R.string.measurement_unit_weight_tiny_imperial
         )
+        this.measurement_unit_temperature_base = context.getString(
+            if (measurementSystem == LocaleData. MeasurementSystem.SI)
+                R.string.measurement_unit_temperature_base_metric
+            else
+                R.string.measurement_unit_temperature_base_imperial
+        )
     }
 
     fun formatEventQuantity(item: LunaEvent): String {
-        return if ((item.quantity ?: 0) > 0) {
-            numberFormat.format(item.quantity) + " " + when (item.type) {
-                LunaEvent.TYPE_BABY_BOTTLE -> measurement_unit_liquid_base
-                LunaEvent.TYPE_WEIGHT -> measurement_unit_weight_base
-                LunaEvent.TYPE_MEDICINE -> measurement_unit_weight_tiny
-                else -> ""
+        val formatted = StringBuilder()
+        if ((item.quantity ?: 0) > 0) {
+            if (item.type == LunaEvent.TYPE_TEMPERATURE)
+                formatted.append((item.quantity / 10.0f).toString())
+            else
+                formatted.append(item.quantity)
+
+            formatted.append(" ")
+            formatted.append(
+                when (item.type) {
+                    LunaEvent.TYPE_BABY_BOTTLE -> measurement_unit_liquid_base
+                    LunaEvent.TYPE_WEIGHT -> measurement_unit_weight_base
+                    LunaEvent.TYPE_MEDICINE -> measurement_unit_weight_tiny
+                    LunaEvent.TYPE_TEMPERATURE -> measurement_unit_temperature_base
+                    else -> ""
+                }
+            )
+        }
+        return formatted.toString()
+    }
+
+    /**
+     * Returns a valid quantity range for the event type.
+     * @return min, max, normal
+     */
+    fun getValidEventQuantityRange(lunaEventType: String): Triple<Int, Int, Int>? {
+        val measurementSystem = LocaleData.getMeasurementSystem(ULocale.getDefault())
+        return when (lunaEventType) {
+            LunaEvent.TYPE_TEMPERATURE -> {
+                if (measurementSystem == LocaleData. MeasurementSystem.SI)
+                    Triple(
+                        context.resources.getInteger(R.integer.human_body_temp_min_metric),
+                        context.resources.getInteger(R.integer.human_body_temp_max_metric),
+                        context.resources.getInteger(R.integer.human_body_temp_normal_metric)
+                    )
+                else
+                    Triple(
+                        context.resources.getInteger(R.integer.human_body_temp_min_imperial),
+                        context.resources.getInteger(R.integer.human_body_temp_max_imperial),
+                        context.resources.getInteger(R.integer.human_body_temp_normal_imperial)
+                    )
             }
-        } else {
-            ""
+            else -> null
         }
     }
 }

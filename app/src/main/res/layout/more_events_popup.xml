@@ -39,23 +39,25 @@
                 style="@style/OverflowMenuText"
                 android:text="@string/overflow_event_note"/>
 
-
-            <LinearLayout
-                android:id="@+id/overflow_event_custom_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-            </LinearLayout>
-
             <TextView
-                android:id="@+id/button_custom"
+                android:id="@+id/button_temperature"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="10dp"
                 android:padding="20dp"
                 android:background="@drawable/button_background"
                 style="@style/OverflowMenuText"
-                android:text="@string/overflow_event_custom"/>
+                android:text="@string/overflow_event_temperature"/>
+
+            <TextView
+                android:id="@+id/button_colic"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:padding="20dp"
+                android:background="@drawable/button_background"
+                style="@style/OverflowMenuText"
+                android:text="@string/overflow_event_colic"/>
 
     </LinearLayout>
 

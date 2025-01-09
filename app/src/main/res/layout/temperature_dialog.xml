@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/dialog_temperature_value"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:valueFrom="@integer/human_body_temp_min_metric"
+        android:valueTo="@integer/human_body_temp_max_metric"
+        android:stepSize="0.1"
+        android:value="@integer/human_body_temp_normal_metric"
+        android:theme="@style/LTSlider"/>
+
+    <TextView
+        android:id="@+id/dialog_temperature_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:textColor="@color/accent"/>
+</LinearLayout>

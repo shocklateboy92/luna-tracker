@@ -10,6 +10,9 @@
     <string name="log_weight_dialog_title">Weight</string>
     <string name="log_weight_dialog_description">Insert the weight</string>
 
+    <string name="log_temperature_dialog_title">Temperature</string>
+    <string name="log_temperature_dialog_description">Insert the temperature</string>
+
     <string name="event_bottle_type" translatable="false">🍼</string>
     <string name="event_scale_type" translatable="false">⚖️</string>
     <string name="event_breastfeeding_left_type" translatable="false">🤱 ←</string>
@@ -20,6 +23,8 @@
     <string name="event_medicine_type" translatable="false">💊</string>
     <string name="event_enema_type" translatable="false">🪠</string>
     <string name="event_note_type" translatable="false">📝</string>
+    <string name="event_temperature_type" translatable="false">🌡️</string>
+    <string name="event_colic_type" translatable="false">💨</string>
     <string name="event_unknown_type" translatable="false">\?</string>
 
     <string name="event_bottle_desc">Baby bottle</string>
@@ -32,12 +37,15 @@
     <string name="event_medicine_desc">Medicine</string>
     <string name="event_enema_desc">Enema</string>
     <string name="event_note_desc">Note</string>
+    <string name="event_temperature_desc">Temperature</string>
+    <string name="event_colic_desc">Gaseous colic</string>
     <string name="event_unknown_desc"></string>
 
     <string name="overflow_event_medicine">💊 Medicine</string>
     <string name="overflow_event_enema">🪠 Enema</string>
     <string name="overflow_event_note">📝 Note</string>
-    <string name="overflow_event_custom">➕ Add custom</string>
+    <string name="overflow_event_temperature">🌡️ Temperature</string>
+    <string name="overflow_event_colic">💨 Gaseous colic</string>
 
     <string name="toast_event_added">Event logged</string>
     <string name="toast_logbook_saved">Logbook saved</string>
@@ -90,6 +98,8 @@
     <string name="measurement_unit_liquid_base_imperial" translatable="false">fl oz.</string>
     <string name="measurement_unit_weight_base_imperial" translatable="false">oz</string>
     <string name="measurement_unit_weight_tiny_imperial" translatable="false">gr</string>
+    <string name="measurement_unit_temperature_base_imperial" translatable="false">°F</string>
+    <string name="measurement_unit_temperature_base_metric" translatable="false">°C</string>
 
     <string name="dialog_event_detail_title">Event detail</string>
 

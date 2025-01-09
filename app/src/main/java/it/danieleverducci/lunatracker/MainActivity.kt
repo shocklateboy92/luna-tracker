@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.progressindicator.LinearProgressIndicator
+import com.google.android.material.slider.Slider
 import com.thegrizzlylabs.sardineandroid.impl.SardineException
 import it.danieleverducci.lunatracker.adapters.LunaEventRecyclerAdapter
 import it.danieleverducci.lunatracker.entities.Logbook
@@ -201,6 +202,30 @@ class MainActivity : AppCompatActivity() {
                 logEvent(LunaEvent(LunaEvent.TYPE_WEIGHT, weight))
             else
                 Toast.makeText(this, R.string.toast_integer_error, Toast.LENGTH_SHORT).show()
+        }
+        d.setNegativeButton(android.R.string.cancel) { dialogInterface, i -> dialogInterface.dismiss() }
+        val alertDialog = d.create()
+        alertDialog.show()
+    }
+
+    fun askTemperatureValue() {
+        // Show number picker dialog
+        val d = AlertDialog.Builder(this)
+        val dialogView = layoutInflater.inflate(R.layout.temperature_dialog, null)
+        d.setTitle(R.string.log_temperature_dialog_title)
+        d.setMessage(R.string.log_temperature_dialog_description)
+        d.setView(dialogView)
+        val tempSlider = dialogView.findViewById<Slider>(R.id.dialog_temperature_value)
+        val range = NumericUtils(this).getValidEventQuantityRange(LunaEvent.TYPE_TEMPERATURE)!!
+        tempSlider.valueFrom = range.first.toFloat()
+        tempSlider.valueTo = range.second.toFloat()
+        tempSlider.value = range.third.toFloat()
+        val tempTextView = dialogView.findViewById<TextView>(R.id.dialog_temperature_display)
+        tempTextView.text = range.third.toString()
+        tempSlider.addOnChangeListener({s, v, b -> tempTextView.text = v.toString()})
+        d.setPositiveButton(android.R.string.ok) { dialogInterface, i ->
+            val temperature = (tempSlider.value * 10).toInt()   // In tenth of a grade
+            logEvent(LunaEvent(LunaEvent.TYPE_TEMPERATURE, temperature))
         }
         d.setNegativeButton(android.R.string.cancel) { dialogInterface, i -> dialogInterface.dismiss() }
         val alertDialog = d.create()
@@ -486,8 +511,14 @@ class MainActivity : AppCompatActivity() {
                 askNotes(LunaEvent(LunaEvent.TYPE_NOTE))
                 dismiss()
             })
-            contentView.findViewById<View>(R.id.button_custom).setOnClickListener({
-                Toast.makeText(anchor.context, "TODO: Implement custom events", Toast.LENGTH_SHORT).show()
+            contentView.findViewById<View>(R.id.button_temperature).setOnClickListener({
+                askTemperatureValue()
+                dismiss()
+            })
+            contentView.findViewById<View>(R.id.button_colic).setOnClickListener({
+                logEvent(
+                    LunaEvent(LunaEvent.TYPE_COLIC)
+                )
                 dismiss()
             })
         }.also { popupWindow ->

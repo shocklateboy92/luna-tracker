@@ -25,6 +25,8 @@ class LunaEvent {
         val TYPE_ENEMA = "ENEMA"
         val TYPE_NOTE = "NOTE"
         val TYPE_CUSTOM = "CUSTOM"
+        val TYPE_COLIC = "COLIC"
+        val TYPE_TEMPERATURE = "TEMPERATURE"
     }
 
     private val jo: JSONObject
@@ -84,6 +86,8 @@ class LunaEvent {
                 TYPE_MEDICINE -> R.string.event_medicine_type
                 TYPE_ENEMA -> R.string.event_enema_type
                 TYPE_NOTE -> R.string.event_note_type
+                TYPE_TEMPERATURE -> R.string.event_temperature_type
+                TYPE_COLIC -> R.string.event_colic_type
                 else -> R.string.event_unknown_type
             }
         )
@@ -102,6 +106,8 @@ class LunaEvent {
                 TYPE_MEDICINE -> R.string.event_medicine_desc
                 TYPE_ENEMA -> R.string.event_enema_desc
                 TYPE_NOTE -> R.string.event_note_desc
+                TYPE_TEMPERATURE -> R.string.event_temperature_desc
+                TYPE_COLIC -> R.string.event_colic_desc
                 else -> R.string.event_unknown_desc
             }
         )

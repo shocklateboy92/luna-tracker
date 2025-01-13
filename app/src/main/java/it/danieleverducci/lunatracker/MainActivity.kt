@@ -314,7 +314,7 @@ class MainActivity : AppCompatActivity() {
 
         // Load data
         setLoading(true)
-        logbookRepo?.loadLogbook(this, object: LogbookLoadedListener{
+        logbookRepo?.loadLogbook(this, "", object: LogbookLoadedListener{
             override fun onLogbookLoaded(lb: Logbook) {
                 runOnUiThread({
                     setLoading(false)

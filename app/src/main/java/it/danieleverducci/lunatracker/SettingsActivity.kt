@@ -72,7 +72,7 @@ open class SettingsActivity : AppCompatActivity() {
             textViewWebDAVPass.text.toString()
         )
         progressIndicator.visibility = View.VISIBLE
-        webDAVLogbookRepo.createLogbook(this, object: WebDAVLogbookRepository.LogbookCreatedListener{
+        webDAVLogbookRepo.createLogbook(this, "", object: WebDAVLogbookRepository.LogbookCreatedListener{
             override fun onLogbookCreated() {
                 runOnUiThread({
                     progressIndicator.visibility = View.INVISIBLE

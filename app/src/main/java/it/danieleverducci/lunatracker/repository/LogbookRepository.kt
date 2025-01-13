@@ -7,8 +7,9 @@ import okio.IOException
 import org.json.JSONException
 
 interface LogbookRepository {
-    fun loadLogbook(context: Context, listener: LogbookLoadedListener)
-    fun saveLogbook(context: Context, logbook: Logbook, listener: LogbookSavedListener)
+    fun loadLogbook(context: Context, name: String = "", listener: LogbookLoadedListener)
+    fun saveLogbook(context: Context,logbook: Logbook, listener: LogbookSavedListener)
+    fun listLogbooks(context: Context, listener: LogbookListObtainedListener): ArrayList<String>
 }
 
 interface LogbookLoadedListener {
@@ -24,5 +25,12 @@ interface LogbookSavedListener {
     fun onIOError(error: IOException)
     fun onWebDAVError(error: SardineException)
     fun onJSONError(error: JSONException)
+    fun onError(error: Exception)
+}
+
+interface LogbookListObtainedListener {
+    fun onLogbookListObtained()
+    fun onIOError(error: IOException)
+    fun onWebDAVError(error: SardineException)
     fun onError(error: Exception)
 }

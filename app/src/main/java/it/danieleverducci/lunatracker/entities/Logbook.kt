@@ -1,6 +1,6 @@
 package it.danieleverducci.lunatracker.entities
 
-class Logbook {
+class Logbook(val name: String) {
     companion object {
         val MAX_SAFE_LOGBOOK_SIZE = 30000
     }

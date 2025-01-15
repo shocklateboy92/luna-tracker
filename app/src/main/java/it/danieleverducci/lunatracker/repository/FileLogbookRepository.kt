@@ -31,7 +31,7 @@ class FileLogbookRepository: LogbookRepository {
 
     fun loadLogbook(context: Context, name: String): Logbook {
         val logbook = Logbook(name)
-        val fileName = "$FILE_NAME_START{${if (name.isNotEmpty()) "_" else ""}{$name}$FILE_NAME_END"
+        val fileName = getFileName(name)
         val file = File(context.getFilesDir(), fileName)
         val json = FileInputStream(file).bufferedReader().use { it.readText() }
         val ja = JSONArray(json)
@@ -57,8 +57,7 @@ class FileLogbookRepository: LogbookRepository {
     }
 
     fun saveLogbook(context: Context, logbook: Logbook) {
-        val name = logbook.name
-        val fileName = "$FILE_NAME_START${if (name.isNotEmpty()) "_" else ""}${name}$FILE_NAME_END"
+        val fileName = getFileName(logbook.name)
         val file = File(context.getFilesDir(), fileName)
         val ja = JSONArray()
         for (l in logbook.logs) {
@@ -91,5 +90,9 @@ class FileLogbookRepository: LogbookRepository {
             )
         }
         return logbooksNames
+    }
+
+    private fun getFileName(name: String): String {
+        return "$FILE_NAME_START${if (name.isNotEmpty()) "_" else ""}${name}$FILE_NAME_END"
     }
 }

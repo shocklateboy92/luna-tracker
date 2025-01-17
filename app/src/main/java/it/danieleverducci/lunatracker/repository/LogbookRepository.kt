@@ -7,9 +7,12 @@ import okio.IOException
 import org.json.JSONException
 
 interface LogbookRepository {
+    companion object {
+        val DEFAULT_LOGBOOK_NAME = ""   // For compatibility with older app versions
+    }
     fun loadLogbook(context: Context, name: String = "", listener: LogbookLoadedListener)
     fun saveLogbook(context: Context,logbook: Logbook, listener: LogbookSavedListener)
-    fun listLogbooks(context: Context, listener: LogbookListObtainedListener): ArrayList<String>
+    fun listLogbooks(context: Context, listener: LogbookListObtainedListener)
 }
 
 interface LogbookLoadedListener {
@@ -29,7 +32,7 @@ interface LogbookSavedListener {
 }
 
 interface LogbookListObtainedListener {
-    fun onLogbookListObtained()
+    fun onLogbookListObtained(logbooksNames: ArrayList<String>)
     fun onIOError(error: IOException)
     fun onWebDAVError(error: SardineException)
     fun onError(error: Exception)

@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.thegrizzlylabs.sardineandroid.impl.SardineException
 import it.danieleverducci.lunatracker.repository.LocalSettingsRepository
+import it.danieleverducci.lunatracker.repository.LogbookRepository
 import it.danieleverducci.lunatracker.repository.WebDAVLogbookRepository
 import okio.IOException
 import org.json.JSONException
@@ -72,7 +73,7 @@ open class SettingsActivity : AppCompatActivity() {
             textViewWebDAVPass.text.toString()
         )
         progressIndicator.visibility = View.VISIBLE
-        webDAVLogbookRepo.createLogbook(this, "", object: WebDAVLogbookRepository.LogbookCreatedListener{
+        webDAVLogbookRepo.createLogbook(this, LogbookRepository.DEFAULT_LOGBOOK_NAME, object: WebDAVLogbookRepository.LogbookCreatedListener{
             override fun onLogbookCreated() {
                 runOnUiThread({
                     progressIndicator.visibility = View.INVISIBLE

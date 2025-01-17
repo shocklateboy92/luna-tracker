@@ -24,6 +24,7 @@ import it.danieleverducci.lunatracker.entities.Logbook
 import it.danieleverducci.lunatracker.entities.LunaEvent
 import it.danieleverducci.lunatracker.repository.FileLogbookRepository
 import it.danieleverducci.lunatracker.repository.LocalSettingsRepository
+import it.danieleverducci.lunatracker.repository.LogbookListObtainedListener
 import it.danieleverducci.lunatracker.repository.LogbookLoadedListener
 import it.danieleverducci.lunatracker.repository.LogbookRepository
 import it.danieleverducci.lunatracker.repository.LogbookSavedListener
@@ -156,7 +157,7 @@ class MainActivity : AppCompatActivity() {
         adapter.notifyDataSetChanged()
 
         // Reload data
-        loadLogbook()
+        loadLogbookList()
     }
 
     override fun onStop() {
@@ -304,9 +305,81 @@ class MainActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
-    fun loadLogbook() {
+    fun showAddLogbookDialog() {
+        val d = AlertDialog.Builder(this)
+        d.setTitle(R.string.dialog_add_logbook_title)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_logbook, null)
+        val logbookNameEditText = dialogView.findViewById<EditText>(R.id.dialog_add_logbook_logbookname)
+        d.setView(dialogView)
+        d.setPositiveButton(android.R.string.ok) { dialogInterface, i -> addLogbook(logbookNameEditText.text.toString()) }
+        d.setNegativeButton(android.R.string.cancel) { dialogInterface, i -> dialogInterface.dismiss() }
+        val alertDialog = d.create()
+        alertDialog.show()
+    }
+
+    fun loadLogbookList() {
+        setLoading(true)
+        logbookRepo?.listLogbooks(this, object: LogbookListObtainedListener {
+            override fun onLogbookListObtained(logbooksNames: ArrayList<String>) {
+                runOnUiThread({
+                    // Show logbooks buttons
+                    val logbooksButtonsContainer =
+                        findViewById<ViewGroup>(R.id.logbooks_buttons_container)
+                    logbooksButtonsContainer.removeAllViews()
+                    for (lbn in logbooksNames) {
+                        val lbnButton = layoutInflater.inflate(
+                            R.layout.logbook_button,
+                            logbooksButtonsContainer,
+                            false
+                        ) as TextView
+                        lbnButton.setText(
+                            if (lbn.isEmpty()) getString(R.string.default_logbook_name) else lbn
+                        )
+                        lbnButton.setOnClickListener({
+                            loadLogbook(lbn)
+                        })
+                        logbooksButtonsContainer.addView(lbnButton)
+                    }
+                    // Show "Add logbook" button
+                    val addLogbookButton = layoutInflater.inflate(
+                        R.layout.logbook_button,
+                        logbooksButtonsContainer,
+                        false
+                    ) as TextView
+                    addLogbookButton.setText("+")
+                    addLogbookButton.setOnClickListener({showAddLogbookDialog()})
+                    logbooksButtonsContainer.addView(addLogbookButton)
+
+                    // Load logbook
+                    loadLogbook()
+                })
+            }
+
+            override fun onIOError(error: IOException) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onWebDAVError(error: SardineException) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onError(error: Exception) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
+
+    fun addLogbook(logbookName: String) {
+        this.logbook = Logbook(logbookName)
+        saveLogbook()
+        loadLogbookList()
+    }
+
+    fun loadLogbook(name: String = LogbookRepository.DEFAULT_LOGBOOK_NAME) {
         if (savingEvent)
             return
+
+        // TODO: Highlight logbook button
 
         // Reset time counter
         handler.removeCallbacks(updateListRunnable)
@@ -314,7 +387,7 @@ class MainActivity : AppCompatActivity() {
 
         // Load data
         setLoading(true)
-        logbookRepo?.loadLogbook(this, "", object: LogbookLoadedListener{
+        logbookRepo?.loadLogbook(this, name, object: LogbookLoadedListener{
             override fun onLogbookLoaded(lb: Logbook) {
                 runOnUiThread({
                     setLoading(false)

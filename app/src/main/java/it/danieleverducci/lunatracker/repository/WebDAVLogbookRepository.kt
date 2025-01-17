@@ -101,16 +101,22 @@ class WebDAVLogbookRepository(val webDavURL: String, val username: String, val p
     override fun listLogbooks(
         context: Context,
         listener: LogbookListObtainedListener
-    ): ArrayList<String> {
-        val logbooksNames = arrayListOf<String>()
-        for (dr: DavResource in sardine.list(webDavURL)){
-            logbooksNames.add(
-                dr.name.replace(FileLogbookRepository.Companion.FILE_NAME_START, "")
-                    .replace("${FileLogbookRepository.Companion.FILE_NAME_START}_", "")
-                    .replace(FileLogbookRepository.Companion.FILE_NAME_END, "")
-            )
-        }
-        return logbooksNames
+    ) {
+        Thread(Runnable {
+            val logbooksNames = arrayListOf<String>()
+            for (dr: DavResource in sardine.list(webDavURL)){
+                if(!dr.name.startsWith(FILE_NAME_START))
+                    continue
+                if(!dr.name.endsWith(FILE_NAME_END))
+                    continue
+                logbooksNames.add(
+                    dr.name.replace("${FILE_NAME_START}_", "")
+                        .replace(FILE_NAME_START, "")
+                        .replace(FILE_NAME_END, "")
+                )
+            }
+            listener.onLogbookListObtained(logbooksNames)
+        }).start()
     }
 
     private fun saveLogbook(context: Context, logbook: Logbook) {

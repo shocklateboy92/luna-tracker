@@ -80,4 +80,10 @@
 
     <string name="dialog_event_detail_title">Dettaglio evento</string>
 
+    <string name="dialog_add_logbook_title">Aggiungi diario</string>
+    <string name="dialog_add_logbook_logbookname">Nome del diario</string>
+    <string name="dialog_add_logbook_message">Scrivi un nome per identificare questo diario. Comparirà in cima allo schermo, e se usi WebDAV sarà incluso anche nel nome del file di salvataggio.</string>
+
+    <string name="default_logbook_name">Senza nome</string>
+
 </resources>

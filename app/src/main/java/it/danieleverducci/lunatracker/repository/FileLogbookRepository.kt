@@ -69,7 +69,7 @@ class FileLogbookRepository: LogbookRepository {
     override fun listLogbooks(
         context: Context,
         listener: LogbookListObtainedListener
-    ): ArrayList<String> {
+    ) {
         val logbooksFileNames = context.getFilesDir().list(object: FilenameFilter {
             override fun accept(dir: File?, name: String?): Boolean {
                 if (name == null)
@@ -81,15 +81,15 @@ class FileLogbookRepository: LogbookRepository {
         })
 
         if (logbooksFileNames == null || logbooksFileNames.isEmpty())
-            return arrayListOf()
+            listener.onLogbookListObtained(arrayListOf())
 
         val logbooksNames = arrayListOf<String>()
         logbooksFileNames.forEach { it ->
             logbooksNames.add(
-                it.replace(FILE_NAME_START, "").replace("${FILE_NAME_START}_", "").replace(FILE_NAME_END, "")
+                it.replace("${FILE_NAME_START}_", "").replace(FILE_NAME_START, "").replace(FILE_NAME_END, "")
             )
         }
-        return logbooksNames
+        listener.onLogbookListObtained(logbooksNames)
     }
 
     private fun getFileName(name: String): String {

@@ -104,9 +104,10 @@
     <string name="dialog_event_detail_title">Event detail</string>
 
     <string name="dialog_add_logbook_title">Add logbook</string>
-    <string name="dialog_add_logbook_logbookname">Logbook name</string>
+    <string name="dialog_add_logbook_logbookname">👶 Logbook name</string>
     <string name="dialog_add_logbook_message">Write a name to identify this logbook. This name will appear on top of the screen and, if you use WebDAV, will be in the save file name as well.</string>
 
     <string name="default_logbook_name">👶 My first logbook</string>
+    <string name="logbook_created">New logbook created: </string>
 
 </resources>

@@ -373,9 +373,48 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun addLogbook(logbookName: String) {
-        this.logbook = Logbook(logbookName)
-        saveLogbook()
-        loadLogbookList()   // TODO: Does not reload logbooks buttons on top, why?
+        val newLogbook = Logbook(logbookName)
+        setLoading(true)
+        logbookRepo?.saveLogbook(this, newLogbook, object: LogbookSavedListener{
+            override fun onLogbookSaved() {
+                Log.d(TAG, "Logbook $logbookName created")
+                runOnUiThread({
+                    setLoading(false)
+                    loadLogbookList()
+                    Toast.makeText(this@MainActivity, getString(R.string.logbook_created) + logbookName, Toast.LENGTH_SHORT).show()
+                })
+            }
+
+            override fun onIOError(error: IOException) {
+                runOnUiThread({
+                    onRepoError(getString(R.string.settings_network_error) + error.toString())
+                })
+            }
+
+            override fun onWebDAVError(error: SardineException) {
+                runOnUiThread({
+                    onRepoError(
+                        if(error.toString().contains("401")) {
+                            getString(R.string.settings_webdav_error_denied)
+                        } else {
+                            getString(R.string.settings_webdav_error_generic) + error.toString()
+                        }
+                    )
+                })
+            }
+
+            override fun onJSONError(error: JSONException) {
+                runOnUiThread({
+                    onRepoError(getString(R.string.settings_json_error) + error.toString())
+                })
+            }
+
+            override fun onError(error: Exception) {
+                runOnUiThread({
+                    onRepoError(getString(R.string.settings_generic_error) + error.toString())
+                })
+            }
+        })
     }
 
     fun loadLogbook(name: String) {

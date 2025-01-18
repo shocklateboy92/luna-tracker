@@ -14,6 +14,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.view.children
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.progressindicator.LinearProgressIndicator
@@ -335,7 +337,12 @@ class MainActivity : AppCompatActivity() {
                         lbnButton.setText(
                             if (lbn.isEmpty()) getString(R.string.default_logbook_name) else lbn
                         )
+                        lbnButton.setTag(lbn)
                         lbnButton.setOnClickListener({
+                            // Changed logbook: empty list
+                            adapter.items.clear()
+                            adapter.notifyDataSetChanged()
+                            // Load logbook
                             loadLogbook(lbn)
                         })
                         logbooksButtonsContainer.addView(lbnButton)
@@ -372,14 +379,12 @@ class MainActivity : AppCompatActivity() {
     fun addLogbook(logbookName: String) {
         this.logbook = Logbook(logbookName)
         saveLogbook()
-        loadLogbookList()
+        loadLogbookList()   // TODO: Does not reload logbooks buttons on top, why?
     }
 
     fun loadLogbook(name: String = LogbookRepository.DEFAULT_LOGBOOK_NAME) {
         if (savingEvent)
             return
-
-        // TODO: Highlight logbook button
 
         // Reset time counter
         handler.removeCallbacks(updateListRunnable)
@@ -394,6 +399,7 @@ class MainActivity : AppCompatActivity() {
                     findViewById<View>(R.id.no_connection_screen).visibility = View.GONE
                     logbook = lb
                     showLogbook()
+                    selectLogbookButton(name)
 
                     if (DEBUG_CHECK_LOGBOOK_CONSISTENCY) {
                         for (e in logbook.logs) {
@@ -602,6 +608,22 @@ class MainActivity : AppCompatActivity() {
             })
             popupWindow.showAsDropDown(anchor)
             showingOverflowPopupWindow = true
+        }
+    }
+
+    private fun selectLogbookButton(logbookName: String) {
+        val logbooksButtonsContainer =
+            findViewById<ViewGroup>(R.id.logbooks_buttons_container)
+        for (lb in logbooksButtonsContainer.children) {
+            if (lb.tag != null && lb.tag.toString().equals(logbookName)) {
+                // Selected
+                lb.setBackgroundColor(ContextCompat.getColor(this, R.color.accent))
+                (lb as TextView).setTextColor(ContextCompat.getColor(this, R.color.black))
+            } else {
+                // Not selected
+                lb.setBackgroundColor(ContextCompat.getColor(this, R.color.transparent))
+                (lb as TextView).setTextColor(ContextCompat.getColor(this, R.color.accent))
+            }
         }
     }
 }

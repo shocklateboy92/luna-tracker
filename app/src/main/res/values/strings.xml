@@ -106,6 +106,7 @@
     <string name="dialog_add_logbook_title">Add logbook</string>
     <string name="dialog_add_logbook_logbookname">👶 Logbook name</string>
     <string name="dialog_add_logbook_message">Write a name to identify this logbook. This name will appear on top of the screen and, if you use WebDAV, will be in the save file name as well.</string>
+    <string name="dialog_add_logbook_message_intro">Welcome! To use this app you need to create at least one logbook. You would probably want to call it with your child\'s name.</string>
 
     <string name="default_logbook_name">👶 My first logbook</string>
     <string name="logbook_created">New logbook created: </string>

@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         // Set listeners
-        findViewById<View>(R.id.logbooks_add_button).setOnClickListener { showAddLogbookDialog() }
+        findViewById<View>(R.id.logbooks_add_button).setOnClickListener { showAddLogbookDialog(true) }
         findViewById<View>(R.id.button_bottle).setOnClickListener { askBabyBottleContent() }
         findViewById<View>(R.id.button_scale).setOnClickListener { askWeightValue() }
         findViewById<View>(R.id.button_nipple_left).setOnClickListener { logEvent(
@@ -311,14 +311,22 @@ class MainActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
-    fun showAddLogbookDialog() {
+    fun showAddLogbookDialog(requestedByUser: Boolean) {
         val d = AlertDialog.Builder(this)
         d.setTitle(R.string.dialog_add_logbook_title)
         val dialogView = layoutInflater.inflate(R.layout.dialog_add_logbook, null)
+        dialogView.findViewById<TextView>(R.id.dialog_add_logbook_message).text = getString(
+            if (requestedByUser) R.string.dialog_add_logbook_message else R.string.dialog_add_logbook_message_intro
+        )
         val logbookNameEditText = dialogView.findViewById<EditText>(R.id.dialog_add_logbook_logbookname)
         d.setView(dialogView)
         d.setPositiveButton(android.R.string.ok) { dialogInterface, i -> addLogbook(logbookNameEditText.text.toString()) }
-        d.setNegativeButton(android.R.string.cancel) { dialogInterface, i -> dialogInterface.dismiss() }
+        if (requestedByUser) {
+            d.setCancelable(true)
+            d.setNegativeButton(android.R.string.cancel) { dialogInterface, i -> dialogInterface.dismiss() }
+        } else {
+            d.setCancelable(false)
+        }
         val alertDialog = d.create()
         alertDialog.show()
     }
@@ -328,6 +336,11 @@ class MainActivity : AppCompatActivity() {
         logbookRepo?.listLogbooks(this, object: LogbookListObtainedListener {
             override fun onLogbookListObtained(logbooksNames: ArrayList<String>) {
                 runOnUiThread({
+                    if (logbooksNames.isEmpty()) {
+                        // First run, no logbook: create one
+                        showAddLogbookDialog(false)
+                        return@runOnUiThread
+                    }
                     // Show logbooks dropdown
                     val spinner = findViewById<Spinner>(R.id.logbooks_spinner)
                     val sAdapter = ArrayAdapter<String>(this@MainActivity, android.R.layout.simple_spinner_item)

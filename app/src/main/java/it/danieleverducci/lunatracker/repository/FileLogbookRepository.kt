@@ -80,8 +80,10 @@ class FileLogbookRepository: LogbookRepository {
             }
         })
 
-        if (logbooksFileNames == null || logbooksFileNames.isEmpty())
+        if (logbooksFileNames == null || logbooksFileNames.isEmpty()) {
             listener.onLogbookListObtained(arrayListOf())
+            return
+        }
 
         val logbooksNames = arrayListOf<String>()
         logbooksFileNames.forEach { it ->

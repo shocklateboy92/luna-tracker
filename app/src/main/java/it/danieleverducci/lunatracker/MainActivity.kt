@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var handler: Handler
     var savingEvent = false
     val updateListRunnable: Runnable = Runnable {
-        loadLogbook()
+        loadLogbook(logbook.name)
         handler.postDelayed(updateListRunnable, 1000*60)
     }
     var logbookRepo: LogbookRepository? = null
@@ -122,10 +122,10 @@ class MainActivity : AppCompatActivity() {
             showSettings()
         })
         findViewById<View>(R.id.button_no_connection_retry).setOnClickListener({
-            loadLogbook()
+            loadLogbook(logbook.name)
         })
         findViewById<View>(R.id.button_sync).setOnClickListener({
-            loadLogbook()
+            loadLogbook(logbook.name)
         })
     }
 
@@ -378,7 +378,7 @@ class MainActivity : AppCompatActivity() {
         loadLogbookList()   // TODO: Does not reload logbooks buttons on top, why?
     }
 
-    fun loadLogbook(name: String = LogbookRepository.DEFAULT_LOGBOOK_NAME) {
+    fun loadLogbook(name: String) {
         if (savingEvent)
             return
 

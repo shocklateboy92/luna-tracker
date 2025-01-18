@@ -65,7 +65,7 @@
             </FrameLayout>
 
             <TextView
-                android:id="@+id/logbooks_add"
+                android:id="@+id/logbooks_add_button"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"

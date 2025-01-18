@@ -83,6 +83,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         // Set listeners
+        findViewById<View>(R.id.logbooks_add_button).setOnClickListener { showAddLogbookDialog() }
         findViewById<View>(R.id.button_bottle).setOnClickListener { askBabyBottleContent() }
         findViewById<View>(R.id.button_scale).setOnClickListener { askWeightValue() }
         findViewById<View>(R.id.button_nipple_left).setOnClickListener { logEvent(
@@ -330,7 +331,12 @@ class MainActivity : AppCompatActivity() {
                     // Show logbooks dropdown
                     val spinner = findViewById<Spinner>(R.id.logbooks_spinner)
                     val sAdapter = ArrayAdapter<String>(this@MainActivity, android.R.layout.simple_spinner_item)
-                    sAdapter.addAll(logbooksNames)
+                    sAdapter.setDropDownViewResource(R.layout.row_logbook_spinner)
+                    for (ln in logbooksNames) {
+                        sAdapter.add(
+                            if (ln.isEmpty()) getString(R.string.default_logbook_name) else ln
+                        )
+                    }
                     spinner.adapter = sAdapter
                     spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
                         override fun onItemSelected(

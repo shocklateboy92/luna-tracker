@@ -7,9 +7,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.NumberPicker
 import android.widget.PopupWindow
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -324,41 +327,28 @@ class MainActivity : AppCompatActivity() {
         logbookRepo?.listLogbooks(this, object: LogbookListObtainedListener {
             override fun onLogbookListObtained(logbooksNames: ArrayList<String>) {
                 runOnUiThread({
-                    // Show logbooks buttons
-                    val logbooksButtonsContainer =
-                        findViewById<ViewGroup>(R.id.logbooks_buttons_container)
-                    logbooksButtonsContainer.removeAllViews()
-                    for (lbn in logbooksNames) {
-                        val lbnButton = layoutInflater.inflate(
-                            R.layout.logbook_button,
-                            logbooksButtonsContainer,
-                            false
-                        ) as TextView
-                        lbnButton.setText(
-                            if (lbn.isEmpty()) getString(R.string.default_logbook_name) else lbn
-                        )
-                        lbnButton.setTag(lbn)
-                        lbnButton.setOnClickListener({
+                    // Show logbooks dropdown
+                    val spinner = findViewById<Spinner>(R.id.logbooks_spinner)
+                    val sAdapter = ArrayAdapter<String>(this@MainActivity, android.R.layout.simple_spinner_item)
+                    sAdapter.addAll(logbooksNames)
+                    spinner.adapter = sAdapter
+                    spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            parent: AdapterView<*>?,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
                             // Changed logbook: empty list
                             adapter.items.clear()
                             adapter.notifyDataSetChanged()
                             // Load logbook
-                            loadLogbook(lbn)
-                        })
-                        logbooksButtonsContainer.addView(lbnButton)
-                    }
-                    // Show "Add logbook" button
-                    val addLogbookButton = layoutInflater.inflate(
-                        R.layout.logbook_button,
-                        logbooksButtonsContainer,
-                        false
-                    ) as TextView
-                    addLogbookButton.setText("+")
-                    addLogbookButton.setOnClickListener({showAddLogbookDialog()})
-                    logbooksButtonsContainer.addView(addLogbookButton)
+                            loadLogbook(logbooksNames.get(position))
+                        }
 
-                    // Load logbook
-                    loadLogbook()
+                        override fun onNothingSelected(parent: AdapterView<*>?) {}
+
+                    }
                 })
             }
 
@@ -399,7 +389,6 @@ class MainActivity : AppCompatActivity() {
                     findViewById<View>(R.id.no_connection_screen).visibility = View.GONE
                     logbook = lb
                     showLogbook()
-                    selectLogbookButton(name)
 
                     if (DEBUG_CHECK_LOGBOOK_CONSISTENCY) {
                         for (e in logbook.logs) {
@@ -608,22 +597,6 @@ class MainActivity : AppCompatActivity() {
             })
             popupWindow.showAsDropDown(anchor)
             showingOverflowPopupWindow = true
-        }
-    }
-
-    private fun selectLogbookButton(logbookName: String) {
-        val logbooksButtonsContainer =
-            findViewById<ViewGroup>(R.id.logbooks_buttons_container)
-        for (lb in logbooksButtonsContainer.children) {
-            if (lb.tag != null && lb.tag.toString().equals(logbookName)) {
-                // Selected
-                lb.setBackgroundColor(ContextCompat.getColor(this, R.color.accent))
-                (lb as TextView).setTextColor(ContextCompat.getColor(this, R.color.black))
-            } else {
-                // Not selected
-                lb.setBackgroundColor(ContextCompat.getColor(this, R.color.transparent))
-                (lb as TextView).setTextColor(ContextCompat.getColor(this, R.color.accent))
-            }
         }
     }
 }

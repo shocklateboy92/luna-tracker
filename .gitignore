@@ -106,3 +106,4 @@ app/release/output-metadata.json
 
 # Other
 app/src/main/java/it/danieleverducci/lunatracker/TemporaryHardcodedCredentials.kt
+.kotlin/sessions/*

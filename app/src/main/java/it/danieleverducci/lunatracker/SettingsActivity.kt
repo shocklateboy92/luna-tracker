@@ -8,7 +8,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.thegrizzlylabs.sardineandroid.impl.SardineException
+import it.danieleverducci.lunatracker.repository.FileLogbookRepository
 import it.danieleverducci.lunatracker.repository.LocalSettingsRepository
+import it.danieleverducci.lunatracker.repository.LogbookListObtainedListener
 import it.danieleverducci.lunatracker.repository.LogbookRepository
 import it.danieleverducci.lunatracker.repository.WebDAVLogbookRepository
 import okio.IOException
@@ -73,13 +75,34 @@ open class SettingsActivity : AppCompatActivity() {
             textViewWebDAVPass.text.toString()
         )
         progressIndicator.visibility = View.VISIBLE
-        webDAVLogbookRepo.createLogbook(this, LogbookRepository.DEFAULT_LOGBOOK_NAME, object: WebDAVLogbookRepository.LogbookCreatedListener{
-            override fun onLogbookCreated() {
-                runOnUiThread({
-                    progressIndicator.visibility = View.INVISIBLE
-                    saveSettings()
-                    Toast.makeText(this@SettingsActivity, R.string.settings_webdav_creation_ok, Toast.LENGTH_SHORT).show()
-                })
+
+        webDAVLogbookRepo.listLogbooks(this, object: LogbookListObtainedListener{
+
+            override fun onLogbookListObtained(logbooksNames: ArrayList<String>) {
+                if (logbooksNames.isEmpty()) {
+                    // TODO: Ask the user if he wants to upload the local ones or to create a new one
+                    copyLocalLogbooksToWebdav(webDAVLogbookRepo, object: OnCopyLocalLogbooksToWebdavFinishedListener {
+
+                        override fun onCopyLocalLogbooksToWebdavFinished(errors: String?) {
+                            runOnUiThread({
+                                progressIndicator.visibility = View.INVISIBLE
+                                if (errors == null) {
+                                    saveSettings()
+                                    Toast.makeText(this@SettingsActivity, R.string.settings_webdav_creation_ok, Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(this@SettingsActivity, errors, Toast.LENGTH_SHORT).show()
+                                }
+                            })
+                        }
+
+                    })
+                } else {
+                    runOnUiThread({
+                        progressIndicator.visibility = View.INVISIBLE
+                        saveSettings()
+                        Toast.makeText(this@SettingsActivity, R.string.settings_webdav_creation_ok, Toast.LENGTH_SHORT).show()
+                    })
+                }
             }
 
             override fun onIOError(error: IOException) {
@@ -100,6 +123,16 @@ open class SettingsActivity : AppCompatActivity() {
                 })
             }
 
+            override fun onError(error: Exception) {
+                runOnUiThread({
+                    progressIndicator.visibility = View.INVISIBLE
+                    Toast.makeText(this@SettingsActivity, getString(R.string.settings_generic_error) + error.toString(), Toast.LENGTH_SHORT).show()
+                })
+            }
+        })
+
+        /*webDAVLogbookRepo.createLogbook(this, LogbookRepository.DEFAULT_LOGBOOK_NAME, object: WebDAVLogbookRepository.LogbookCreatedListener{
+
             override fun onJSONError(error: JSONException) {
                 runOnUiThread({
                     progressIndicator.visibility = View.INVISIBLE
@@ -107,14 +140,8 @@ open class SettingsActivity : AppCompatActivity() {
                 })
             }
 
-            override fun onError(error: Exception) {
-                runOnUiThread({
-                    progressIndicator.visibility = View.INVISIBLE
-                    Toast.makeText(this@SettingsActivity, getString(R.string.settings_generic_error) + error.toString(), Toast.LENGTH_SHORT).show()
-                })
-            }
 
-        })
+        })*/
     }
 
     fun saveSettings() {
@@ -128,6 +155,34 @@ open class SettingsActivity : AppCompatActivity() {
             textViewWebDAVPass.text.toString()
         )
         finish()
+    }
+
+    /**
+     * Copies the local logbooks to webdav.
+     * @return success
+     */
+    private fun copyLocalLogbooksToWebdav(webDAVLogbookRepository: WebDAVLogbookRepository, listener: OnCopyLocalLogbooksToWebdavFinishedListener) {
+        Thread(Runnable {
+            var errors = StringBuilder()
+            val fileLogbookRepo = FileLogbookRepository()
+            val logbooks = fileLogbookRepo.getAllLogbooks(this)
+            for (logbook in logbooks) {
+                // Copy only if does not already exist
+                val error = webDAVLogbookRepository.uploadLogbookIfNotExists(this, logbook.name)
+                if (error != null) {
+                    if (errors.isNotEmpty())
+                        errors.append("\n")
+                    errors.append(String.format(getString(R.string.settings_webdav_upload_error), logbook.name, error))
+                }
+            }
+            listener.onCopyLocalLogbooksToWebdavFinished(
+                if (errors.isEmpty()) null else errors.toString()
+            )
+        }).start()
+    }
+
+    private interface OnCopyLocalLogbooksToWebdavFinishedListener {
+        fun onCopyLocalLogbooksToWebdavFinished(errors: String?)
     }
 
 }

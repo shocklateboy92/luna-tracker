@@ -80,6 +80,7 @@
     <string name="settings_webdav_creation_ok">Successfully connected with WebDAV server</string>
     <string name="settings_json_error">There\'s a save file on the server, but is corrupted or unreadable. Please delete it </string>
     <string name="settings_generic_error">Error: </string>
+    <string name="settings_webdav_upload_error">Error while uploading local logbook %1$s to webdav: %2$s</string>
 
     <string name="trim_logbook_dialog_title">Your logbook is pretty big!</string>
     <string name="trim_logbook_dialog_message_local">Your logbook file is growing a lot. We suggest trimming the oldest events to avoid crashes.</string>

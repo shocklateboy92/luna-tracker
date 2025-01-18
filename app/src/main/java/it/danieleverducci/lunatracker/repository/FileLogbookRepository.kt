@@ -70,6 +70,18 @@ class FileLogbookRepository: LogbookRepository {
         context: Context,
         listener: LogbookListObtainedListener
     ) {
+        listener.onLogbookListObtained(listLogbooks(context))
+    }
+
+    fun getAllLogbooks(context: Context): List<Logbook> {
+        val logbooks = arrayListOf<Logbook>()
+        for (logbookName in listLogbooks(context)) {
+            logbooks.add(loadLogbook(context, logbookName))
+        }
+        return logbooks
+    }
+
+    private fun listLogbooks(context: Context): ArrayList<String> {
         val logbooksFileNames = context.getFilesDir().list(object: FilenameFilter {
             override fun accept(dir: File?, name: String?): Boolean {
                 if (name == null)
@@ -81,8 +93,7 @@ class FileLogbookRepository: LogbookRepository {
         })
 
         if (logbooksFileNames == null || logbooksFileNames.isEmpty()) {
-            listener.onLogbookListObtained(arrayListOf())
-            return
+            return arrayListOf()
         }
 
         val logbooksNames = arrayListOf<String>()
@@ -91,7 +102,7 @@ class FileLogbookRepository: LogbookRepository {
                 it.replace("${FILE_NAME_START}_", "").replace(FILE_NAME_START, "").replace(FILE_NAME_END, "")
             )
         }
-        listener.onLogbookListObtained(logbooksNames)
+        return logbooksNames
     }
 
     private fun getFileName(name: String): String {

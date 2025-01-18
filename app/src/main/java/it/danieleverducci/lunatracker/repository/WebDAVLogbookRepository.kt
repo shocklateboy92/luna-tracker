@@ -137,61 +137,51 @@ class WebDAVLogbookRepository(val webDavURL: String, val username: String, val p
 
     /**
      * Connect to server and check if a logbook already exists.
-     * If it does not exist, try to upload the local one (or create a new one).
+     * If it does not exist, try to upload the local one.
+     * @return error, or null if no error
      */
-    fun createLogbook(context: Context, name: String, listener: LogbookCreatedListener) {
-        Thread(Runnable {
-            try {
-                loadLogbook(name)
-                listener.onLogbookCreated()
-            } catch (e: SardineException) {
-                if (e.toString().contains("404")) {
-                    // Connection successful, but no existing save. Upload the local one.
-                    try {
-                        val flr = FileLogbookRepository()
-                        val logbook = flr.loadLogbook(context, name)
-                        saveLogbook(context, logbook)
-                        Log.d(TAG, "Local logbook file found, uploaded")
-                        listener.onLogbookCreated()
-                    } catch (e: FileNotFoundException) {
-                        Log.d(TAG, "No local logbook file found, uploading empty file")
-                        saveLogbook(context, Logbook(name))
-                        listener.onLogbookCreated()
-                    } catch (e: SardineException) {
-                        Log.e(TAG, "Unable to upload logbook: $e")
-                        listener.onWebDAVError(e)
-                    }
-                } else {
-                    Log.e(TAG, e.toString())
-                    listener.onWebDAVError(e)
+    fun uploadLogbookIfNotExists(context: Context, name: String): String? {
+        val flr = FileLogbookRepository()
+        try {
+            loadLogbook(name)
+            Log.d(TAG, "Logbook file $name already exist on the webDav share: will not overwrite it")
+            return null
+        } catch (e: SardineException) {
+            if (e.toString().contains("404")) {
+                // Connection successful, but logbook does not exist. Upload the local one.
+                try {
+                    val logbook = flr.loadLogbook(context, name)
+                    saveLogbook(context, logbook)
+                    Log.d(TAG, "Local logbook file $name found, uploaded")
+                    return null
+                } catch (e: FileNotFoundException) {
+                    Log.e(TAG, "No local logbook file found, this should not happen!")
+                    return "No local logbook file found, app is in inconsistent state, please delete and reinstall it"
+                } catch (e: SardineException) {
+                    Log.e(TAG, "Unable to upload logbook: $e")
+                    return e.toString()
                 }
-            } catch (e: IOException) {
+            } else {
                 Log.e(TAG, e.toString())
-                listener.onIOError(e)
-            } catch (e: SocketTimeoutException) {
-                Log.e(TAG, e.toString())
-                listener.onIOError(e)
-            } catch (e: JSONException) {
-                Log.e(TAG, e.toString())
-                listener.onJSONError(e)
-            } catch (e: Exception) {
-                listener.onError(e)
+                return e.toString()
             }
-        }).start()
+        } catch (e: IOException) {
+            Log.e(TAG, e.toString())
+            return e.toString()
+        } catch (e: SocketTimeoutException) {
+            Log.e(TAG, e.toString())
+            return e.toString()
+        } catch (e: JSONException) {
+            Log.e(TAG, e.toString())
+            return e.toString()
+        } catch (e: Exception) {
+            return e.toString()
+        }
     }
 
     private fun getUrl(name: String): String {
         val fileName = "${FILE_NAME_START}${if (name.isNotEmpty()) "_" else ""}${name}${FILE_NAME_END}"
         Log.d(TAG, fileName)
         return "$webDavURL/$fileName"
-    }
-
-
-    interface LogbookCreatedListener {
-        fun onLogbookCreated()
-        fun onIOError(error: okio.IOException)
-        fun onWebDAVError(error: SardineException)
-        fun onJSONError(error: JSONException)
-        fun onError(error: Exception)
     }
 }

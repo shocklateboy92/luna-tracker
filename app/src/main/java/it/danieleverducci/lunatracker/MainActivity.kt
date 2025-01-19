@@ -1,5 +1,6 @@
 package it.danieleverducci.lunatracker
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -306,9 +307,11 @@ class MainActivity : AppCompatActivity() {
         )
         dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_notes).setText(event.notes)
         d.setView(dialogView)
-        d.setPositiveButton(android.R.string.ok) { dialogInterface, i -> dialogInterface.dismiss() }
+        d.setPositiveButton(R.string.dialog_event_detail_save_button) { dialogInterface, i -> dialogInterface.dismiss() }
+        d.setNeutralButton(R.string.dialog_event_detail_delete_button) { dialogInterface, i -> deleteEvent(event) }
         val alertDialog = d.create()
         alertDialog.show()
+        alertDialog.getButton(DialogInterface.BUTTON_NEUTRAL).setTextColor(ContextCompat.getColor(this, R.color.danger))
     }
 
     fun showAddLogbookDialog(requestedByUser: Boolean) {
@@ -518,6 +521,18 @@ class MainActivity : AppCompatActivity() {
         if (logbook.isTooBig()) {
             askToTrimLogbook()
         }
+    }
+
+    fun deleteEvent(event: LunaEvent) {
+        // Update view
+        savingEvent(true)
+        adapter.items.remove(event)
+        adapter.notifyDataSetChanged()
+
+        // Update data
+        setLoading(true)
+        logbook.logs.remove(event)
+        saveLogbook()
     }
 
     /**

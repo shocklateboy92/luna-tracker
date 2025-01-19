@@ -103,6 +103,8 @@
     <string name="measurement_unit_temperature_base_metric" translatable="false">°C</string>
 
     <string name="dialog_event_detail_title">Event detail</string>
+    <string name="dialog_event_detail_save_button">Save</string>
+    <string name="dialog_event_detail_delete_button">Delete</string>
 
     <string name="dialog_add_logbook_title">Add logbook</string>
     <string name="dialog_add_logbook_logbookname">👶 Logbook name</string>

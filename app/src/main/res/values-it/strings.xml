@@ -87,6 +87,7 @@
     <string name="dialog_add_logbook_logbookname">👶 Nome del diario</string>
     <string name="dialog_add_logbook_message">Scrivi un nome per identificare questo diario. Comparirà in cima allo schermo, e se usi WebDAV sarà incluso anche nel nome del file di salvataggio.\nSe vuoi un\'icona, inserisci una emoji!</string>
 
+    <string name="dialog_add_logbook_message_intro">Benvenuto! Per usare quest\'app devi creare almeno un diario. Probabilmente vuoi chiamarlo col nome di tuo figlio.</string>
     <string name="default_logbook_name">👶 Il mio primo diario</string>
     <string name="logbook_created">Creato nuovo diario: </string>
 

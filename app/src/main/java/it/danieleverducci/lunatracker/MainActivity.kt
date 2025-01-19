@@ -307,7 +307,7 @@ class MainActivity : AppCompatActivity() {
         )
         dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_notes).setText(event.notes)
         d.setView(dialogView)
-        d.setPositiveButton(R.string.dialog_event_detail_save_button) { dialogInterface, i -> dialogInterface.dismiss() }
+        d.setPositiveButton(android.R.string.ok) { dialogInterface, i -> dialogInterface.dismiss() }
         d.setNeutralButton(R.string.dialog_event_detail_delete_button) { dialogInterface, i -> deleteEvent(event) }
         val alertDialog = d.create()
         alertDialog.show()

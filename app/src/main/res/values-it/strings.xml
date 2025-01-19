@@ -61,6 +61,7 @@
     <string name="settings_storage_dav_pass">Password</string>
     <string name="settings_network_error">Impossibile raggiungere il server: </string>
     <string name="settings_webdav_error_denied">Nome utente o password WebDAV sbagliati</string>
+    <string name="settings_webdav_error_server_offline">Il server WebDAV non è al momento disponibile</string>
     <string name="settings_webdav_error_generic">Si è verificato un errore tentando di accedere al server WebDAV:</string>
     <string name="settings_webdav_creation_error_generic">Impossibile creare un file di salvataggio sul server WebDAV:</string>
     <string name="settings_webdav_creation_ok">Connessione al server WebDAV avvenuta con successo</string>

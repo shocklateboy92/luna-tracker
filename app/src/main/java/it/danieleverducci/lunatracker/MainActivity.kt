@@ -123,7 +123,7 @@ class MainActivity : AppCompatActivity() {
             showSettings()
         })
         findViewById<View>(R.id.button_no_connection_retry).setOnClickListener({
-            loadLogbook(logbook.name)
+            loadLogbookList()
         })
         findViewById<View>(R.id.button_sync).setOnClickListener({
             loadLogbook(logbook.name)
@@ -375,15 +375,35 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onIOError(error: IOException) {
-                TODO("Not yet implemented")
+                Log.e(TAG, "Unable to load logbooks list (IOError): $error")
+                runOnUiThread({
+                    setLoading(false)
+                    onRepoError(getString(R.string.settings_network_error) + error.toString())
+                })
             }
 
             override fun onWebDAVError(error: SardineException) {
-                TODO("Not yet implemented")
+                Log.e(TAG, "Unable to load logbooks list (SardineException): $error")
+                runOnUiThread({
+                    setLoading(false)
+                    onRepoError(
+                        if(error.toString().contains("401")) {
+                            getString(R.string.settings_webdav_error_denied)
+                        } else if(error.toString().contains("503")) {
+                            getString(R.string.settings_webdav_error_server_offline)
+                        } else {
+                            getString(R.string.settings_webdav_error_generic) + error.toString()
+                        }
+                    )
+                })
             }
 
             override fun onError(error: Exception) {
-                TODO("Not yet implemented")
+                Log.e(TAG, "Unable to load logbooks list: $error")
+                runOnUiThread({
+                    setLoading(false)
+                    onRepoError(getString(R.string.settings_generic_error) + error.toString())
+                })
             }
         })
     }
@@ -412,6 +432,8 @@ class MainActivity : AppCompatActivity() {
                     onRepoError(
                         if(error.toString().contains("401")) {
                             getString(R.string.settings_webdav_error_denied)
+                        } else if(error.toString().contains("503")) {
+                            getString(R.string.settings_webdav_error_server_offline)
                         } else {
                             getString(R.string.settings_webdav_error_generic) + error.toString()
                         }
@@ -475,6 +497,8 @@ class MainActivity : AppCompatActivity() {
                     onRepoError(
                         if(error.toString().contains("401")) {
                             getString(R.string.settings_webdav_error_denied)
+                        } else if(error.toString().contains("503")) {
+                            getString(R.string.settings_webdav_error_server_offline)
                         } else {
                             getString(R.string.settings_webdav_error_generic) + error.toString()
                         }
@@ -573,6 +597,8 @@ class MainActivity : AppCompatActivity() {
                     onRepoError(
                         if(error.toString().contains("401")) {
                             getString(R.string.settings_webdav_error_denied)
+                        } else if(error.toString().contains("503")) {
+                            getString(R.string.settings_webdav_error_server_offline)
                         } else {
                             getString(R.string.settings_webdav_error_generic) + error.toString()
                         }

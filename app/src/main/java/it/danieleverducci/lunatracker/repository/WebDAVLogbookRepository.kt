@@ -103,19 +103,32 @@ class WebDAVLogbookRepository(val webDavURL: String, val username: String, val p
         listener: LogbookListObtainedListener
     ) {
         Thread(Runnable {
-            val logbooksNames = arrayListOf<String>()
-            for (dr: DavResource in sardine.list(webDavURL)){
-                if(!dr.name.startsWith(FILE_NAME_START))
-                    continue
-                if(!dr.name.endsWith(FILE_NAME_END))
-                    continue
-                logbooksNames.add(
-                    dr.name.replace("${FILE_NAME_START}_", "")
-                        .replace(FILE_NAME_START, "")
-                        .replace(FILE_NAME_END, "")
-                )
+            try {
+                val logbooksNames = arrayListOf<String>()
+                for (dr: DavResource in sardine.list(webDavURL)){
+                    if(!dr.name.startsWith(FILE_NAME_START))
+                        continue
+                    if(!dr.name.endsWith(FILE_NAME_END))
+                        continue
+                    logbooksNames.add(
+                        dr.name.replace("${FILE_NAME_START}_", "")
+                            .replace(FILE_NAME_START, "")
+                            .replace(FILE_NAME_END, "")
+                    )
+                }
+                listener.onLogbookListObtained(logbooksNames)
+            } catch (e: SardineException) {
+                Log.e(TAG, e.toString())
+                listener.onWebDAVError(e)
+            } catch (e: IOException) {
+                Log.e(TAG, e.toString())
+                listener.onIOError(e)
+            } catch (e: SocketTimeoutException) {
+                Log.e(TAG, e.toString())
+                listener.onIOError(e)
+            } catch (e: Exception) {
+                listener.onError(e)
             }
-            listener.onLogbookListObtained(logbooksNames)
         }).start()
     }
 

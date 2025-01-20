@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         val DEBUG_CHECK_LOGBOOK_CONSISTENCY = false
     }
 
-    lateinit var logbook: Logbook
+    var logbook: Logbook? = null
     lateinit var adapter: LunaEventRecyclerAdapter
     lateinit var progressIndicator: LinearProgressIndicator
     lateinit var buttonsContainer: ViewGroup
@@ -57,7 +57,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var handler: Handler
     var savingEvent = false
     val updateListRunnable: Runnable = Runnable {
-        loadLogbook(logbook.name)
+        if (logbook != null)
+            loadLogbook(logbook!!.name)
         handler.postDelayed(updateListRunnable, 1000*60)
     }
     var logbookRepo: LogbookRepository? = null
@@ -123,10 +124,11 @@ class MainActivity : AppCompatActivity() {
             showSettings()
         })
         findViewById<View>(R.id.button_no_connection_retry).setOnClickListener({
+            // This may happen at start, when logbook is still null: better ask the logbook list
             loadLogbookList()
         })
         findViewById<View>(R.id.button_sync).setOnClickListener({
-            loadLogbook(logbook.name)
+            loadLogbookList()
         })
     }
 
@@ -137,8 +139,11 @@ class MainActivity : AppCompatActivity() {
 
     fun showLogbook() {
         // Show logbook
+        if (logbook == null)
+            Log.w(TAG, "showLogbook(): logbook is null!")
+
         adapter.items.clear()
-        adapter.items.addAll(logbook.logs)
+        adapter.items.addAll(logbook?.logs ?: listOf())
         adapter.notifyDataSetChanged()
     }
 
@@ -163,8 +168,13 @@ class MainActivity : AppCompatActivity() {
         // Update list dates
         adapter.notifyDataSetChanged()
 
-        // Reload data
-        loadLogbookList()
+        if (logbook != null) {
+            // Already running: reload data for currently selected logbook
+            loadLogbook(logbook!!.name)
+        } else {
+            // First start: load logbook list
+            loadLogbookList()
+        }
     }
 
     override fun onStop() {
@@ -284,7 +294,7 @@ class MainActivity : AppCompatActivity() {
             }
         )
         d.setPositiveButton(R.string.trim_logbook_dialog_button_ok) { dialogInterface, i ->
-            logbook.trim()
+            logbook?.trim()
             saveLogbook()
         }
         d.setNegativeButton(R.string.trim_logbook_dialog_button_cancel) { dialogInterface, i ->
@@ -474,7 +484,7 @@ class MainActivity : AppCompatActivity() {
                     showLogbook()
 
                     if (DEBUG_CHECK_LOGBOOK_CONSISTENCY) {
-                        for (e in logbook.logs) {
+                        for (e in logbook?.logs ?: listOf()) {
                             val em = e.getTypeEmoji(this@MainActivity)
                             if (em == getString(R.string.event_unknown_type)) {
                                 Log.e(TAG, "UNKNOWN: ${e.type}")
@@ -538,11 +548,11 @@ class MainActivity : AppCompatActivity() {
         recyclerView.smoothScrollToPosition(0)
 
         setLoading(true)
-        logbook.logs.add(0, event)
+        logbook?.logs?.add(0, event)
         saveLogbook(event)
 
         // Check logbook size to avoid OOM errors
-        if (logbook.isTooBig()) {
+        if (logbook?.isTooBig() == true) {
             askToTrimLogbook()
         }
     }
@@ -555,7 +565,7 @@ class MainActivity : AppCompatActivity() {
 
         // Update data
         setLoading(true)
-        logbook.logs.remove(event)
+        logbook?.logs?.remove(event)
         saveLogbook()
     }
 
@@ -564,7 +574,11 @@ class MainActivity : AppCompatActivity() {
      * of error can be removed from the list.
      */
     fun saveLogbook(lastEventAdded: LunaEvent? = null) {
-        logbookRepo?.saveLogbook(this, logbook, object: LogbookSavedListener{
+        if (logbook == null) {
+            Log.e(TAG, "Trying to save logbook, but logbook is null!")
+            return
+        }
+        logbookRepo?.saveLogbook(this, logbook!!, object: LogbookSavedListener{
             override fun onLogbookSaved() {
                 Log.d(TAG, "Logbook saved")
                 runOnUiThread({

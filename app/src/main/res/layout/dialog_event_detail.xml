@@ -25,19 +25,23 @@
 
     <TextView
         android:id="@+id/dialog_event_detail_type_date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
         android:layout_marginTop="20dp"
-        android:gravity="center_horizontal"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_vertical"
+        android:drawableEnd="@drawable/ic_edit"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/accent"
         android:textStyle="bold"
-        android:text="2020"/>
+        android:text="@string/dialog_event_detail_datetime_icon"/>
 
     <TextView
         android:id="@+id/dialog_event_detail_type_quantity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="2020"/>
+        android:text="Quantity"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -49,7 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="italic"
-            android:text="Lorem ipsum"/>
+            android:text="Notes"/>
 
     </ScrollView>
 </LinearLayout>

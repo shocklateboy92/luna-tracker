@@ -1,5 +1,7 @@
 package it.danieleverducci.lunatracker
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -40,6 +42,7 @@ import okio.IOException
 import org.json.JSONException
 import utils.NumericUtils
 import java.text.DateFormat
+import java.util.Calendar
 import java.util.Date
 
 class MainActivity : AppCompatActivity() {
@@ -311,13 +314,40 @@ class MainActivity : AppCompatActivity() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_event_detail, null)
         dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_emoji).setText(event.getTypeEmoji(this))
         dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_description).setText(event.getTypeDescription(this))
-        dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_date).setText(dateFormat.format(Date(event.time * 1000)))
         dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_quantity).setText(
             NumericUtils(this).formatEventQuantity(event)
         )
         dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_notes).setText(event.notes)
+
+        val currentDateTime = Calendar.getInstance()
+        currentDateTime.time = Date(event.time * 1000)
+        val dateTextView = dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_date)
+        dateTextView.text = String.format(getString(R.string.dialog_event_detail_datetime_icon), dateFormat.format(currentDateTime.time))
+        dateTextView.setOnClickListener({
+            // Show datetime picker
+            val startYear = currentDateTime.get(Calendar.YEAR)
+            val startMonth = currentDateTime.get(Calendar.MONTH)
+            val startDay = currentDateTime.get(Calendar.DAY_OF_MONTH)
+            val startHour = currentDateTime.get(Calendar.HOUR_OF_DAY)
+            val startMinute = currentDateTime.get(Calendar.MINUTE)
+
+            DatePickerDialog(this, DatePickerDialog.OnDateSetListener { _, year, month, day ->
+                TimePickerDialog(this, TimePickerDialog.OnTimeSetListener { _, hour, minute ->
+                    val pickedDateTime = Calendar.getInstance()
+                    pickedDateTime.set(year, month, day, hour, minute)
+                    currentDateTime.time = pickedDateTime.time
+                }, startHour, startMinute, false).show()
+            }, startYear, startMonth, startDay).show()
+        })
+
         d.setView(dialogView)
-        d.setPositiveButton(android.R.string.ok) { dialogInterface, i -> dialogInterface.dismiss() }
+        d.setPositiveButton(R.string.dialog_event_detail_save_button) { dialogInterface, i -> {
+            // Save event
+            event.time = currentDateTime.time.time / 1000 // Seconds since epoch
+            // TODO: move event at the correct logbook position
+            saveLogbook()
+        } }
+        d.setNegativeButton(R.string.dialog_event_detail_cancel_button) { dialogInterface, i -> dialogInterface.dismiss() }
         d.setNeutralButton(R.string.dialog_event_detail_delete_button) { dialogInterface, i -> deleteEvent(event) }
         val alertDialog = d.create()
         alertDialog.show()

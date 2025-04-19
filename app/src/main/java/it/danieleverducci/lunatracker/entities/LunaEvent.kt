@@ -27,6 +27,7 @@ class LunaEvent {
         val TYPE_CUSTOM = "CUSTOM"
         val TYPE_COLIC = "COLIC"
         val TYPE_TEMPERATURE = "TEMPERATURE"
+        val TYPE_FOOD = "FOOD"
     }
 
     private val jo: JSONObject
@@ -88,6 +89,7 @@ class LunaEvent {
                 TYPE_NOTE -> R.string.event_note_type
                 TYPE_TEMPERATURE -> R.string.event_temperature_type
                 TYPE_COLIC -> R.string.event_colic_type
+                TYPE_FOOD -> R.string.event_food_type
                 else -> R.string.event_unknown_type
             }
         )
@@ -108,9 +110,17 @@ class LunaEvent {
                 TYPE_NOTE -> R.string.event_note_desc
                 TYPE_TEMPERATURE -> R.string.event_temperature_desc
                 TYPE_COLIC -> R.string.event_colic_desc
+                TYPE_FOOD -> R.string.event_food_desc
                 else -> R.string.event_unknown_desc
             }
         )
+    }
+
+    fun getDialogMessage(context: Context): String? {
+        return when(type) {
+            TYPE_MEDICINE -> context.getString(R.string.log_medicine_dialog_description)
+            else -> null
+        }
     }
 
     fun toJson(): JSONObject {

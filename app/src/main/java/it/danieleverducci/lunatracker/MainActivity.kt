@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity() {
         // Set listeners
         findViewById<View>(R.id.logbooks_add_button).setOnClickListener { showAddLogbookDialog(true) }
         findViewById<View>(R.id.button_bottle).setOnClickListener { askBabyBottleContent() }
-        findViewById<View>(R.id.button_scale).setOnClickListener { askWeightValue() }
+        findViewById<View>(R.id.button_food).setOnClickListener { askNotes(LunaEvent(LunaEvent.TYPE_FOOD)) }
         findViewById<View>(R.id.button_nipple_left).setOnClickListener { logEvent(
             LunaEvent(
                 LunaEvent.TYPE_BREASTFEEDING_LEFT_NIPPLE
@@ -254,12 +254,7 @@ class MainActivity : AppCompatActivity() {
         val d = AlertDialog.Builder(this)
         val dialogView = layoutInflater.inflate(R.layout.dialog_notes, null)
         d.setTitle(lunaEvent.getTypeDescription(this))
-        d.setMessage(
-            when (lunaEvent.type){
-                LunaEvent.TYPE_MEDICINE -> R.string.log_medicine_dialog_description
-                else -> R.string.log_notes_dialog_description
-            }
-        )
+        d.setMessage(lunaEvent.getDialogMessage(this))
         d.setView(dialogView)
         val notesET = dialogView.findViewById<EditText>(R.id.notes_edittext)
         val qtyET = dialogView.findViewById<EditText>(R.id.notes_qty_edittext)
@@ -700,6 +695,10 @@ class MainActivity : AppCompatActivity() {
                 logEvent(
                     LunaEvent(LunaEvent.TYPE_COLIC)
                 )
+                dismiss()
+            })
+            contentView.findViewById<View>(R.id.button_scale).setOnClickListener({
+                askWeightValue()
                 dismiss()
             })
         }.also { popupWindow ->

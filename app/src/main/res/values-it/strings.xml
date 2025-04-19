@@ -13,6 +13,7 @@
     <string name="log_temperature_dialog_title">Temperatura</string>
     <string name="log_temperature_dialog_description">Inserisci la temperatura</string>
 
+    <string name="overflow_event_scale">⚖️ Peso</string>
     <string name="overflow_event_medicine">💊 Medicina</string>
     <string name="overflow_event_enema">🪠 Clistere</string>
     <string name="overflow_event_note">📝 Nota</string>
@@ -20,6 +21,7 @@
     <string name="overflow_event_colic">💨 Colichette</string>
 
     <string name="event_bottle_desc">Biberon</string>
+    <string name="event_food_desc">Cibo</string>
     <string name="event_scale_desc">Pesata</string>
     <string name="event_breastfeeding_left_desc">Allatt. al seno (sx)</string>
     <string name="event_breastfeeding_both_desc">Allatt. al seno</string>

@@ -12,8 +12,8 @@ android {
         applicationId = "it.danieleverducci.lunatracker"
         minSdk = 21
         targetSdk = 34
-        versionCode = 2
-        versionName = "0.3"
+        versionCode = 3
+        versionName = "0.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

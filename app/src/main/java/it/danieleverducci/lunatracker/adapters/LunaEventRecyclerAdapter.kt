@@ -14,13 +14,14 @@ import utils.NumericUtils
 
 class LunaEventRecyclerAdapter: RecyclerView.Adapter<LunaEventRecyclerAdapter.LunaEventVH> {
     private val context: Context
-    val items = ArrayList<LunaEvent>()
+    private val items: ArrayList<LunaEvent>
     val numericUtils: NumericUtils
     var onItemClickListener: OnItemClickListener? = null
     val layoutRes: Int
 
-    constructor(context: Context) {
+    constructor(context: Context, items: ArrayList<LunaEvent>) {
         this.context = context
+        this.items = items
         this.numericUtils = NumericUtils(context)
 
         val fontScale = context.resources.configuration.fontScale

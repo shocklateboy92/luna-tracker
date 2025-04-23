@@ -83,8 +83,7 @@
     <string name="log_notes_dialog_note_hint">Inserisci le note</string>
 
     <string name="dialog_event_detail_title">Dettaglio evento</string>
-    <string name="dialog_event_detail_save_button">Salva</string>
-    <string name="dialog_event_detail_cancel_button">Annulla</string>
+    <string name="dialog_event_detail_close_button">OK</string>
     <string name="dialog_event_detail_delete_button">Elimina</string>
 
     <string name="dialog_add_logbook_title">Aggiungi diario</string>

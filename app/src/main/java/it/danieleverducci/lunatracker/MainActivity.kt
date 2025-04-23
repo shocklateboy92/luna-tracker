@@ -21,7 +21,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.children
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.progressindicator.LinearProgressIndicator
@@ -53,14 +52,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     var logbook: Logbook? = null
-    lateinit var adapter: LunaEventRecyclerAdapter
+    var pauseLogbookUpdate = false
     lateinit var progressIndicator: LinearProgressIndicator
     lateinit var buttonsContainer: ViewGroup
     lateinit var recyclerView: RecyclerView
     lateinit var handler: Handler
     var savingEvent = false
     val updateListRunnable: Runnable = Runnable {
-        if (logbook != null)
+        if (logbook != null && !pauseLogbookUpdate)
             loadLogbook(logbook!!.name)
         handler.postDelayed(updateListRunnable, 1000*60)
     }
@@ -71,12 +70,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         handler = Handler(mainLooper)
-        adapter = LunaEventRecyclerAdapter(this)
-        adapter.onItemClickListener = object: LunaEventRecyclerAdapter.OnItemClickListener{
-            override fun onItemClick(event: LunaEvent) {
-                showEventDetailDialog(event)
-            }
-        }
 
         // Show view
         setContentView(R.layout.activity_main)
@@ -85,7 +78,6 @@ class MainActivity : AppCompatActivity() {
         buttonsContainer = findViewById<ViewGroup>(R.id.buttons_container)
         recyclerView = findViewById<RecyclerView>(R.id.list_events)
         recyclerView.setLayoutManager(LinearLayoutManager(applicationContext))
-        recyclerView.adapter = adapter
 
         // Set listeners
         findViewById<View>(R.id.logbooks_add_button).setOnClickListener { showAddLogbookDialog(true) }
@@ -135,6 +127,16 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    private fun setListAdapter(items: ArrayList<LunaEvent>) {
+        val adapter = LunaEventRecyclerAdapter(this, items)
+        adapter.onItemClickListener = object: LunaEventRecyclerAdapter.OnItemClickListener{
+            override fun onItemClick(event: LunaEvent) {
+                showEventDetailDialog(event)
+            }
+        }
+        recyclerView.adapter = adapter
+    }
+
     fun showSettings() {
         val i = Intent(this, SettingsActivity::class.java)
         startActivity(i)
@@ -145,9 +147,7 @@ class MainActivity : AppCompatActivity() {
         if (logbook == null)
             Log.w(TAG, "showLogbook(): logbook is null!")
 
-        adapter.items.clear()
-        adapter.items.addAll(logbook?.logs ?: listOf())
-        adapter.notifyDataSetChanged()
+        setListAdapter(logbook?.logs ?: arrayListOf())
     }
 
     override fun onStart() {
@@ -169,7 +169,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Update list dates
-        adapter.notifyDataSetChanged()
+        recyclerView.adapter?.notifyDataSetChanged()
 
         if (logbook != null) {
             // Already running: reload data for currently selected logbook
@@ -303,6 +303,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun showEventDetailDialog(event: LunaEvent) {
+        // Do not update list while the detail is shown, to avoid changing the object below while it is changed by the user
+        pauseLogbookUpdate = true
         val dateFormat = DateFormat.getDateTimeInstance();
         val d = AlertDialog.Builder(this)
         d.setTitle(R.string.dialog_event_detail_title)
@@ -331,22 +333,27 @@ class MainActivity : AppCompatActivity() {
                     val pickedDateTime = Calendar.getInstance()
                     pickedDateTime.set(year, month, day, hour, minute)
                     currentDateTime.time = pickedDateTime.time
+                    dateTextView.text = String.format(getString(R.string.dialog_event_detail_datetime_icon), dateFormat.format(currentDateTime.time))
+
+                    // Save event and move it to the right position in the logbook
+                    event.time = currentDateTime.time.time / 1000 // Seconds since epoch
+                    logbook?.sort()
+                    recyclerView.adapter?.notifyDataSetChanged()
+                    saveLogbook()
                 }, startHour, startMinute, false).show()
             }, startYear, startMonth, startDay).show()
         })
 
         d.setView(dialogView)
-        d.setPositiveButton(R.string.dialog_event_detail_save_button) { dialogInterface, i -> {
-            // Save event
-            event.time = currentDateTime.time.time / 1000 // Seconds since epoch
-            // TODO: move event at the correct logbook position
-            saveLogbook()
-        } }
-        d.setNegativeButton(R.string.dialog_event_detail_cancel_button) { dialogInterface, i -> dialogInterface.dismiss() }
+        d.setPositiveButton(R.string.dialog_event_detail_close_button) { dialogInterface, i -> dialogInterface.dismiss() }
         d.setNeutralButton(R.string.dialog_event_detail_delete_button) { dialogInterface, i -> deleteEvent(event) }
         val alertDialog = d.create()
         alertDialog.show()
         alertDialog.getButton(DialogInterface.BUTTON_NEUTRAL).setTextColor(ContextCompat.getColor(this, R.color.danger))
+        alertDialog.setOnDismissListener({
+            // Resume logbook update
+            pauseLogbookUpdate = false
+        })
     }
 
     fun showAddLogbookDialog(requestedByUser: Boolean) {
@@ -397,8 +404,7 @@ class MainActivity : AppCompatActivity() {
                             id: Long
                         ) {
                             // Changed logbook: empty list
-                            adapter.items.clear()
-                            adapter.notifyDataSetChanged()
+                            setListAdapter(arrayListOf())
                             // Load logbook
                             loadLogbook(logbooksNames.get(position))
                         }
@@ -568,12 +574,11 @@ class MainActivity : AppCompatActivity() {
 
     fun logEvent(event: LunaEvent) {
         savingEvent(true)
-        adapter.items.add(0, event)
-        adapter.notifyItemInserted(0)
-        recyclerView.smoothScrollToPosition(0)
 
         setLoading(true)
         logbook?.logs?.add(0, event)
+        recyclerView.adapter?.notifyItemInserted(0)
+        recyclerView.smoothScrollToPosition(0)
         saveLogbook(event)
 
         // Check logbook size to avoid OOM errors
@@ -585,12 +590,11 @@ class MainActivity : AppCompatActivity() {
     fun deleteEvent(event: LunaEvent) {
         // Update view
         savingEvent(true)
-        adapter.items.remove(event)
-        adapter.notifyDataSetChanged()
 
         // Update data
         setLoading(true)
         logbook?.logs?.remove(event)
+        recyclerView.adapter?.notifyDataSetChanged()
         saveLogbook()
     }
 
@@ -673,8 +677,7 @@ class MainActivity : AppCompatActivity() {
             setLoading(false)
 
             Toast.makeText(this@MainActivity, R.string.toast_event_add_error, Toast.LENGTH_SHORT).show()
-            adapter.items.remove(event)
-            adapter.notifyDataSetChanged()
+            recyclerView.adapter?.notifyDataSetChanged()
             savingEvent(false)
         })
     }

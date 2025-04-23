@@ -11,7 +11,7 @@ import java.util.Date
  * allow expandability and backwards compatibility (if a field is added in a
  * release, it is simply ignored by previous ones).
  */
-class LunaEvent {
+class LunaEvent: Comparable<LunaEvent> {
 
     companion object {
         val TYPE_BABY_BOTTLE = "BABY_BOTTLE"
@@ -129,5 +129,9 @@ class LunaEvent {
 
     override fun toString(): String {
         return "${type} qty: $quantity time: ${Date(time * 1000)}"
+    }
+
+    override fun compareTo(other: LunaEvent): Int {
+        return (this.time - other.time).toInt()
     }
 }

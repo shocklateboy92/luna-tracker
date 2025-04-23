@@ -16,4 +16,8 @@ class Logbook(val name: String) {
     fun trim() {
         logs.subList(MAX_SAFE_LOGBOOK_SIZE/2, logs.size).clear()
     }
+
+    fun sort() {
+        logs.sortDescending()
+    }
 }

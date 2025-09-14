@@ -321,9 +321,27 @@ class MainActivity : AppCompatActivity() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_event_detail, null)
         dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_emoji).setText(event.getTypeEmoji(this))
         dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_description).setText(event.getTypeDescription(this))
-        dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_quantity).setText(
+        val quantityTextView = dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_quantity)
+        quantityTextView.setText(
             NumericUtils(this).formatEventQuantity(event)
         )
+
+        // Make quantity clickable for breastfeeding events
+        if (event.type == LunaEvent.TYPE_BREASTFEEDING_LEFT_NIPPLE ||
+            event.type == LunaEvent.TYPE_BREASTFEEDING_RIGHT_NIPPLE ||
+            event.type == LunaEvent.TYPE_BREASTFEEDING_BOTH_NIPPLE) {
+
+            quantityTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_edit, 0)
+            quantityTextView.compoundDrawableTintList = ContextCompat.getColorStateList(this, R.color.accent)
+
+            quantityTextView.setOnClickListener {
+                showDurationEditDialog(event) {
+                    // Update quantity display after duration edit
+                    quantityTextView.text = NumericUtils(this@MainActivity).formatEventQuantity(event)
+                }
+            }
+        }
+
         dialogView.findViewById<TextView>(R.id.dialog_event_detail_type_notes).setText(event.notes)
 
         val currentDateTime = Calendar.getInstance()
@@ -812,6 +830,99 @@ class MainActivity : AppCompatActivity() {
             val remainingSeconds = seconds % 60
             timerDisplay?.text = String.format("%02d:%02d", minutes, remainingSeconds)
         }
+    }
+
+    fun showDurationEditDialog(event: LunaEvent, onDurationChanged: (() -> Unit)? = null) {
+        // Only allow duration editing for breastfeeding events
+        if (event.type != LunaEvent.TYPE_BREASTFEEDING_LEFT_NIPPLE &&
+            event.type != LunaEvent.TYPE_BREASTFEEDING_RIGHT_NIPPLE &&
+            event.type != LunaEvent.TYPE_BREASTFEEDING_BOTH_NIPPLE) {
+            return
+        }
+
+        val d = AlertDialog.Builder(this)
+        val dialogView = layoutInflater.inflate(R.layout.duration_edit_dialog, null)
+
+        d.setTitle(R.string.duration_edit_title)
+        d.setView(dialogView)
+        d.setCancelable(true)
+
+        val durationDisplay = dialogView.findViewById<TextView>(R.id.duration_display)
+        val minutesPicker = dialogView.findViewById<NumberPicker>(R.id.minutes_picker)
+        val secondsPicker = dialogView.findViewById<NumberPicker>(R.id.seconds_picker)
+        val cancelButton = dialogView.findViewById<Button>(R.id.duration_cancel_button)
+        val saveButton = dialogView.findViewById<Button>(R.id.duration_save_button)
+
+        // Parse current duration (stored in seconds)
+        val totalSeconds = event.quantity
+        val currentMinutes = totalSeconds / 60
+        val currentSecondsRemainder = totalSeconds % 60
+
+        // Setup number pickers
+        minutesPicker.minValue = 0
+        minutesPicker.maxValue = 240 // 4 hours max
+        minutesPicker.value = currentMinutes
+        minutesPicker.wrapSelectorWheel = false
+
+        secondsPicker.minValue = 0
+        secondsPicker.maxValue = 59
+        secondsPicker.value = currentSecondsRemainder
+        secondsPicker.wrapSelectorWheel = false
+
+        // Update display function
+        fun updateDisplay() {
+            val minutes = minutesPicker.value
+            val seconds = secondsPicker.value
+            durationDisplay.text = NumericUtils(this@MainActivity).formatEventQuantity(
+                LunaEvent(event.type, minutes * 60 + seconds)
+            )
+        }
+
+        // Set initial display
+        updateDisplay()
+
+        // Add listeners for real-time updates
+        minutesPicker.setOnValueChangedListener { _, _, _ -> updateDisplay() }
+        secondsPicker.setOnValueChangedListener { _, _, _ -> updateDisplay() }
+
+        val alertDialog = d.create()
+
+        cancelButton.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        saveButton.setOnClickListener {
+            val newMinutes = minutesPicker.value
+            val newSeconds = secondsPicker.value
+            val newTotalSeconds = newMinutes * 60 + newSeconds
+
+            // Validate minimum duration
+            if (newTotalSeconds < 30) {
+                Toast.makeText(this, R.string.duration_edit_error, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Validate maximum duration (4 hours = 14400 seconds)
+            if (newTotalSeconds > 14400) {
+                Toast.makeText(this, R.string.duration_edit_max_error, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Update event quantity
+            event.quantity = newTotalSeconds
+
+            // Sort logbook and update display
+            logbook?.sort()
+            recyclerView.adapter?.notifyDataSetChanged()
+            saveLogbook()
+
+            // Call the callback to update parent dialog
+            onDurationChanged?.invoke()
+
+            alertDialog.dismiss()
+        }
+
+        alertDialog.show()
     }
 
     private fun showOverflowPopupWindow(anchor: View) {

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center">
+
+    <!-- Current Duration Display -->
+    <TextView
+        android:id="@+id/duration_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="5 min 30 sec"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/accent"
+        android:layout_marginBottom="24dp"
+        android:gravity="center" />
+
+    <!-- Duration Input Section -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="24dp"
+        android:gravity="center_vertical">
+
+        <!-- Minutes -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginEnd="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/duration_minutes"
+                android:textSize="14sp"
+                android:layout_marginBottom="8dp" />
+
+            <NumberPicker
+                android:id="@+id/minutes_picker"
+                android:layout_width="80dp"
+                android:layout_height="150dp" />
+
+        </LinearLayout>
+
+        <!-- Seconds -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginStart="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/duration_seconds"
+                android:textSize="14sp"
+                android:layout_marginBottom="8dp" />
+
+            <NumberPicker
+                android:id="@+id/seconds_picker"
+                android:layout_width="80dp"
+                android:layout_height="150dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Helper Text -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/duration_edit_hint"
+        android:textSize="12sp"
+        android:textColor="@android:color/darker_gray"
+        android:layout_marginBottom="16dp"
+        android:gravity="center" />
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/duration_cancel_button"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@android:string/cancel"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/duration_save_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@android:string/ok"
+            android:layout_marginStart="8dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

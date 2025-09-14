@@ -64,6 +64,14 @@
     <string name="log_breastfeeding_timer_description">Tap Start to begin timing the feeding session</string>
     <string name="timer_min_duration_error">Please record at least 30 seconds</string>
 
+    <!-- Duration editing strings -->
+    <string name="duration_edit_title">Edit Duration</string>
+    <string name="duration_minutes">Minutes</string>
+    <string name="duration_seconds">Seconds</string>
+    <string name="duration_edit_hint">Minimum duration: 30 seconds</string>
+    <string name="duration_edit_error">Duration must be at least 30 seconds</string>
+    <string name="duration_edit_max_error">Duration cannot exceed 4 hours</string>
+
     <string name="now">now</string>
     <string name="hour_ago">hour</string>
     <string name="hours_ago">hours</string>

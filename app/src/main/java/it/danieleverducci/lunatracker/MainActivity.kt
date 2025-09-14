@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.EditText
 import android.widget.NumberPicker
 import android.widget.PopupWindow
@@ -58,6 +59,21 @@ class MainActivity : AppCompatActivity() {
     lateinit var recyclerView: RecyclerView
     lateinit var handler: Handler
     var savingEvent = false
+
+    // Timer-related variables
+    private var timerRunning = false
+    private var timerStartTime = 0L
+    private var timerElapsedTime = 0L
+    private val timerUpdateRunnable = object : Runnable {
+        override fun run() {
+            if (timerRunning) {
+                timerElapsedTime = System.currentTimeMillis() - timerStartTime
+                updateTimerDisplay()
+                handler.postDelayed(this, 1000)
+            }
+        }
+    }
+    private var currentTimerDialog: AlertDialog? = null
     val updateListRunnable: Runnable = Runnable {
         if (logbook != null && !pauseLogbookUpdate)
             loadLogbook(logbook!!.name)
@@ -83,21 +99,15 @@ class MainActivity : AppCompatActivity() {
         findViewById<View>(R.id.logbooks_add_button).setOnClickListener { showAddLogbookDialog(true) }
         findViewById<View>(R.id.button_bottle).setOnClickListener { askBabyBottleContent() }
         findViewById<View>(R.id.button_food).setOnClickListener { askNotes(LunaEvent(LunaEvent.TYPE_FOOD)) }
-        findViewById<View>(R.id.button_nipple_left).setOnClickListener { logEvent(
-            LunaEvent(
-                LunaEvent.TYPE_BREASTFEEDING_LEFT_NIPPLE
-            )
-        ) }
-        findViewById<View>(R.id.button_nipple_both).setOnClickListener { logEvent(
-            LunaEvent(
-                LunaEvent.TYPE_BREASTFEEDING_BOTH_NIPPLE
-            )
-        ) }
-        findViewById<View>(R.id.button_nipple_right).setOnClickListener { logEvent(
-            LunaEvent(
-                LunaEvent.TYPE_BREASTFEEDING_RIGHT_NIPPLE
-            )
-        ) }
+        findViewById<View>(R.id.button_nipple_left).setOnClickListener {
+            showBreastfeedingTimerDialog(LunaEvent.TYPE_BREASTFEEDING_LEFT_NIPPLE)
+        }
+        findViewById<View>(R.id.button_nipple_both).setOnClickListener {
+            showBreastfeedingTimerDialog(LunaEvent.TYPE_BREASTFEEDING_BOTH_NIPPLE)
+        }
+        findViewById<View>(R.id.button_nipple_right).setOnClickListener {
+            showBreastfeedingTimerDialog(LunaEvent.TYPE_BREASTFEEDING_RIGHT_NIPPLE)
+        }
         findViewById<View>(R.id.button_change_poo).setOnClickListener { logEvent(
             LunaEvent(
                 LunaEvent.TYPE_DIAPERCHANGE_POO
@@ -697,6 +707,110 @@ class MainActivity : AppCompatActivity() {
         } else {
             savingEvent = false
             buttonsContainer.alpha = 1f
+        }
+    }
+
+    fun showBreastfeedingTimerDialog(eventType: String) {
+        if (currentTimerDialog != null) {
+            return // Prevent multiple timer dialogs
+        }
+
+        // Reset timer state
+        timerRunning = false
+        timerElapsedTime = 0L
+
+        val d = AlertDialog.Builder(this)
+        val dialogView = layoutInflater.inflate(R.layout.breastfeeding_timer_dialog, null)
+
+        // Get event description for title
+        val tempEvent = LunaEvent(eventType)
+        d.setTitle(getString(R.string.log_breastfeeding_timer_title) + " - " + tempEvent.getTypeDescription(this))
+        d.setMessage(R.string.log_breastfeeding_timer_description)
+        d.setView(dialogView)
+        d.setCancelable(false)
+
+        val timerDisplay = dialogView.findViewById<TextView>(R.id.timer_display)
+        val startStopButton = dialogView.findViewById<Button>(R.id.timer_start_stop_button)
+        val resetButton = dialogView.findViewById<Button>(R.id.timer_reset_button)
+        val cancelButton = dialogView.findViewById<Button>(R.id.timer_cancel_button)
+        val saveButton = dialogView.findViewById<Button>(R.id.timer_save_button)
+
+        // Initialize display
+        timerDisplay.text = "00:00"
+
+        startStopButton.setOnClickListener {
+            if (!timerRunning) {
+                // Start timer
+                timerStartTime = System.currentTimeMillis() - timerElapsedTime
+                timerRunning = true
+                startStopButton.text = getString(R.string.timer_stop)
+                resetButton.isEnabled = false
+                handler.post(timerUpdateRunnable)
+            } else {
+                // Stop timer
+                timerRunning = false
+                startStopButton.text = getString(R.string.timer_start)
+                resetButton.isEnabled = true
+                saveButton.isEnabled = true
+                handler.removeCallbacks(timerUpdateRunnable)
+            }
+        }
+
+        resetButton.setOnClickListener {
+            timerElapsedTime = 0L
+            timerDisplay.text = "00:00"
+            saveButton.isEnabled = false
+        }
+
+        cancelButton.setOnClickListener {
+            timerRunning = false
+            handler.removeCallbacks(timerUpdateRunnable)
+            currentTimerDialog?.dismiss()
+            currentTimerDialog = null
+        }
+
+        saveButton.setOnClickListener {
+            val durationSeconds = (timerElapsedTime / 1000).toInt()
+            if (durationSeconds < 30) {
+                Toast.makeText(this, R.string.timer_min_duration_error, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Create and log the event with duration
+            val event = LunaEvent(eventType, durationSeconds)
+            logEvent(event)
+
+            // Clean up timer
+            timerRunning = false
+            handler.removeCallbacks(timerUpdateRunnable)
+            currentTimerDialog?.dismiss()
+            currentTimerDialog = null
+        }
+
+        val alertDialog = d.create()
+        currentTimerDialog = alertDialog
+
+        // Store references to dialog elements for timer updates
+        alertDialog.setOnShowListener {
+            // Store dialog reference for timer updates
+        }
+
+        alertDialog.setOnDismissListener {
+            timerRunning = false
+            handler.removeCallbacks(timerUpdateRunnable)
+            currentTimerDialog = null
+        }
+
+        alertDialog.show()
+    }
+
+    private fun updateTimerDisplay() {
+        currentTimerDialog?.let { dialog ->
+            val timerDisplay = dialog.findViewById<TextView>(R.id.timer_display)
+            val seconds = (timerElapsedTime / 1000).toInt()
+            val minutes = seconds / 60
+            val remainingSeconds = seconds % 60
+            timerDisplay?.text = String.format("%02d:%02d", minutes, remainingSeconds)
         }
     }
 

@@ -55,6 +55,15 @@
     <string name="toast_event_add_error">Unable to log the event</string>
     <string name="toast_integer_error">Invalid value. Insert an integer.</string>
 
+    <!-- Timer strings -->
+    <string name="timer_start">Start</string>
+    <string name="timer_stop">Stop</string>
+    <string name="timer_reset">Reset</string>
+    <string name="timer_save">Save</string>
+    <string name="log_breastfeeding_timer_title">Breastfeeding Timer</string>
+    <string name="log_breastfeeding_timer_description">Tap Start to begin timing the feeding session</string>
+    <string name="timer_min_duration_error">Please record at least 30 seconds</string>
+
     <string name="now">now</string>
     <string name="hour_ago">hour</string>
     <string name="hours_ago">hours</string>

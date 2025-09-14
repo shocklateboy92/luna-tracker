@@ -46,21 +46,42 @@ class NumericUtils (val context: Context) {
     fun formatEventQuantity(item: LunaEvent): String {
         val formatted = StringBuilder()
         if ((item.quantity ?: 0) > 0) {
-            if (item.type == LunaEvent.TYPE_TEMPERATURE)
-                formatted.append((item.quantity / 10.0f).toString())
-            else
-                formatted.append(item.quantity)
-
-            formatted.append(" ")
-            formatted.append(
-                when (item.type) {
-                    LunaEvent.TYPE_BABY_BOTTLE -> measurement_unit_liquid_base
-                    LunaEvent.TYPE_WEIGHT -> measurement_unit_weight_base
-                    LunaEvent.TYPE_MEDICINE -> measurement_unit_weight_tiny
-                    LunaEvent.TYPE_TEMPERATURE -> measurement_unit_temperature_base
-                    else -> ""
+            when (item.type) {
+                LunaEvent.TYPE_TEMPERATURE -> {
+                    formatted.append((item.quantity / 10.0f).toString())
+                    formatted.append(" ")
+                    formatted.append(measurement_unit_temperature_base)
                 }
-            )
+                LunaEvent.TYPE_BREASTFEEDING_LEFT_NIPPLE,
+                LunaEvent.TYPE_BREASTFEEDING_RIGHT_NIPPLE,
+                LunaEvent.TYPE_BREASTFEEDING_BOTH_NIPPLE -> {
+                    // Format duration for breastfeeding events (quantity is in seconds)
+                    val durationSeconds = item.quantity
+                    val minutes = durationSeconds / 60
+                    val seconds = durationSeconds % 60
+
+                    if (minutes > 0) {
+                        formatted.append("$minutes min")
+                        if (seconds > 0) {
+                            formatted.append(" $seconds sec")
+                        }
+                    } else {
+                        formatted.append("$seconds sec")
+                    }
+                }
+                else -> {
+                    formatted.append(item.quantity)
+                    formatted.append(" ")
+                    formatted.append(
+                        when (item.type) {
+                            LunaEvent.TYPE_BABY_BOTTLE -> measurement_unit_liquid_base
+                            LunaEvent.TYPE_WEIGHT -> measurement_unit_weight_base
+                            LunaEvent.TYPE_MEDICINE -> measurement_unit_weight_tiny
+                            else -> ""
+                        }
+                    )
+                }
+            }
         }
         return formatted.toString()
     }

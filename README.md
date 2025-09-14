@@ -1,3 +1,6 @@
+This is a fork of penguin86's excellent [LunaTracker](https://git.ichibi.eu/penguin86/luna-tracker).
+I created this fork because I had no way to contact the original author to make a pull request, since it seems to be on a private Gitea instance without public registration.
+
 # 🌜 LunaTracker 🌛
 
 LunaTracker is a newborn baby tracking app.

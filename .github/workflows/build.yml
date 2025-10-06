@@ -1,9 +1,9 @@
-name: Build Signed APK
+name: Build and Release APK
 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -41,9 +41,12 @@ jobs:
             -Pandroid.injected.signing.key.alias="$KEY_ALIAS" \
             -Pandroid.injected.signing.key.password="$KEY_PASSWORD"
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: luna-tracker-release
-          path: app/build/outputs/apk/release/*.apk
-          retention-days: 30
+          files: app/build/outputs/apk/release/*.apk
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
